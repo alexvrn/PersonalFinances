@@ -72,18 +72,18 @@ Component {
         anchors.verticalCenter: wrapper.verticalCenter
       }
 
-      BusyIndicator {
-        id: bubble
-        anchors {
-          right: dateText.left
-        }
+//      BusyIndicator {
+//        id: bubble
+//        anchors {
+//          right: dateText.left
+//        }
 
-        height: dateText.height / 2
-        width: height
-        anchors.verticalCenter: wrapper.verticalCenter
-        opacity: 1.0
-        visible: opacity !== 0.0
-      }
+//        height: dateText.height / 2
+//        width: height
+//        anchors.verticalCenter: wrapper.verticalCenter
+//        opacity: 1.0
+//        visible: opacity !== 0.0
+//      }
 
       Text {
         id: dateText
