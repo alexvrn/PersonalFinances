@@ -31,7 +31,7 @@ void DBWorker::insert(const QVariantMap& data)
   query.prepare(script);
   query.addBindValue(data["summa"]);
   query.addBindValue(data["comment"]);
-  query.addBindValue(QVariant(QDateTime::currentMSecsSinceEpoch()));
+  query.addBindValue(QDate::currentDate().toJulianDay());
   if (!query.exec())
   {
     qCritical("%s", query.lastError().text().toStdString().c_str());
@@ -49,9 +49,8 @@ void DBWorker::statistic(const QDate& date)
   QString script("SELECT * FROM PersonalFinances");
   if (!date.isNull()) // Если дата задана
   {
-    qDebug() << date;
-    script += QString(" WHERE strftime('%m', date)='%1' AND strftime('%y', date)='%2'").arg(date.month()).arg(date.year());
-    qDebug() << script;
+    QString month = QString("%1").arg(date.month(), 2, 10, QChar('0'));
+    script += QString(" WHERE strftime('%m', date)='%1' AND strftime('%Y', date)='%2'").arg(month).arg(date.year());
   }
 
   QSqlQuery query;
@@ -59,7 +58,6 @@ void DBWorker::statistic(const QDate& date)
   if (!query.exec())
   {
     qCritical("%s", query.lastError().text().toStdString().c_str());
-    //emit resultProcess(false, query.lastError().text());
     emit getStatistic(QVariantList());
   }
   else
@@ -71,7 +69,7 @@ void DBWorker::statistic(const QDate& date)
       v["id"] = query.value("id");
       v["summa"] = query.value("summa").toInt();
       v["comment"] = query.value("comment");
-      v["date"] = QDateTime::fromMSecsSinceEpoch(query.value("date").toUInt()).toString("dd.MM.yyyy");
+      v["date"] = QDate::fromJulianDay(query.value("date").toInt()).toString("dd.MM.yyyy");
       result.append(v);
     }
     emit getStatistic(result);
