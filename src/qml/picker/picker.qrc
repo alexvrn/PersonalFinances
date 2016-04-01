@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/picker">
+        <file>ACTimePicker.qml</file>
+        <file>ACPickerList.qml</file>
+        <file>ACPicker.qml</file>
+        <file>ACDialogButton.qml</file>
+        <file>ACDialog.qml</file>
+        <file>ACDatePicker.qml</file>
+        <file>Controls/ACButton.qml</file>
+        <file>Controls/ACNavigationDrawer.qml</file>
+        <file>Controls/ACTextField.qml</file>
+        <file>Controls/ACToast.qml</file>
+        <file>Global/ACGlobal.qml</file>
+        <file>Global/ACStyle.qml</file>
+        <file>Global/qmldir</file>
+        <file>Other/ACBorder.qml</file>
+        <file>Other/ACDarkBackground.qml</file>
+        <file>Other/ACStackView.qml</file>
+        <file>Other/ACSwipeArea.qml</file>
+        <file>Other/ACTitleLabel.qml</file>
+    </qresource>
+</RCC>

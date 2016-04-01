@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>StackAnimatedDelegate.qml</file>
+        <file>StartPage.qml</file>
+        <file>icons.js</file>
+        <file alias="icons.ttf">icons/icons.ttf</file>
+        <file>DateEdit.qml</file>
+        <file>CalendarButton.qml</file>
+        <file>icons/ic_today_black_48px.svg</file>
+        <file>CalendarDialog.qml</file>
+        <file>picker/Global/ACGlobal.qml</file>
+        <file>picker/Global/ACStyle.qml</file>
+        <file>picker/Global/qmldir</file>
+        <file>picker/picker.qrc</file>
+        <file>icons/pickerShadowDown.svg</file>
+        <file>icons/pickerShadowUp.svg</file>
+        <file>MaterialDateEdit.qml</file>
+        <file>MaterialTimeEdit.qml</file>
+        <file>StatisticPage.qml</file>
+        <file>ControlFinancesPage.qml</file>
+        <file>FinancesDelegate.qml</file>
+        <file>StyleColor.js</file>
+        <file>ScrollBar.qml</file>
+        <file>FinancesListView.qml</file>
+        <file>MaterialDayYearEdit.qml</file>
+        <file>CalendarDayYearDialog.qml</file>
+        <file>icons/money.jpg</file>
+        <file>InputDataComponent.qml</file>
+        <file>icons/stat.jpg</file>
+    </qresource>
+</RCC>
