@@ -49,6 +49,7 @@ void DBWorker::statistic(const QDate& date)
   QString script("SELECT * FROM PersonalFinances");
   if (!date.isNull()) // Если дата задана
   {
+    // Сделано для того, чтобы меся в запросе был в формате mm
     QString month = QString("%1").arg(date.month(), 2, 10, QChar('0'));
     script += QString(" WHERE strftime('%m', date)='%1' AND strftime('%Y', date)='%2'").arg(month).arg(date.year());
   }

@@ -149,7 +149,39 @@ Item {
     opacity: 0.15
   }
 
-  Material.PaperCheckBox {
+  Item {
+    id: dateSettingItem
+    anchors {
+      top: root.top
+      topMargin: 10*Density.dp
+      left: root.left
+      leftMargin: 2*Density.dp
+      right: root.right
+      rightMargin: 2*Density.dp
+    }
+    height: root.height / 15
+
+    Material.PaperToogleButton {
+      id: dateSwitch
+
+      checked: false
+      anchors {
+        verticalCenter: dateSettingItem.verticalCenter
+        left: dateSettingItem.left
+        leftMargin: 2*Density.dp
+      }
+
+      onCheckedChanged: {
+        // Отправляем запрос БД
+        if (checked)
+          DBController.statistic(new Date(calendarDialog.year, calendarDialog.month));
+        else
+          DBController.statistic();
+      }
+    }
+
+
+  /*Material.PaperCheckBox {
     id: dateCheck
 
     checked: false
@@ -170,59 +202,66 @@ Item {
       else
         DBController.statistic();
     }
-  }
+  }*/
 
-  Material.AnimatedText {
-    id: calendarText
+    Item {
+      id: calendarItem
 
-    color: "#616161"
-    text: Qt.formatDate(new Date, "MM.yyyy") // ставим текущюю дату
-    font.pixelSize: 16*Density.dp
-    font.bold: true
-    anchors {
-      horizontalCenter: root.horizontalCenter
-      top: root.top
-      topMargin: 10*Density.dp
-    }
-    height: root.height / 15 // TODO: подумать про расположение и размеры
-    animation: calendarText.flipAnimation
-    opacity: dateCheck.checked ? 1.0 : 0.3
-    Behavior on opacity { NumberAnimation { duration: 100 } }
-  }
+      anchors {
+        right: dateSettingItem.right
+        rightMargin: 2*Density.dp
+        verticalCenter: dateSwitch.verticalCenter
+        left: dateSwitch.right
+      }
+      height: dateSwitch.height
 
-  Material.GlowShadow {
-    id: calendarShadow
-    anchors.fill: calendar
-    radius: 1
-    depth: 5
-  }
+      Material.AnimatedText {
+        id: calendarText
 
-  CalendarButton {
-    id: calendar
+        color: "#616161"
+        text: Qt.formatDate(new Date, "MM.yyyy") // ставим текущюю дату
+        font.pixelSize: 16*Density.dp
+        font.bold: true
+        anchors {
+          verticalCenter: calendarItem.verticalCenter
+          right: calendar.left
+          rightMargin: 10*Density.dp
+        }
+        animation: calendarText.flipAnimation
+        opacity: dateSwitch.checked ? 1.0 : 0.3
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+      }
 
-    anchors {
-      right: root.right
-      rightMargin: 2*Density.dp
-      verticalCenter: calendarText.verticalCenter
-    }
-    height: calendarText.height // TODO
-    width: height
+      Material.GlowShadow {
+        id: calendarShadow
+        anchors.fill: calendar
+        radius: 1
+        depth: 5
+      }
 
-    z: 100
+      CalendarButton {
+        id: calendar
 
-    opacity: dateCheck.checked ? 1.0 : 0.3
-    Behavior on opacity { NumberAnimation { duration: 100 } }
+        anchors {
+          right: calendarItem.right
+          rightMargin: 2*Density.dp
+          verticalCenter: calendarItem.verticalCenter
+        }
+        height: dateSettingItem.height*0.8
+        width: height
 
-    onClicked: {
-      //anchors.right = undefined
-      //anchors.top = undefined
-      //anchors.rightMargin = 0
+        z: 100
 
-      //x = root.width / 2 - width / 2
-      //y = root.height / 2 - height / 2
-      calendarDialog.show()
-    }
-  }
+        opacity: dateSwitch.checked ? 1.0 : 0.3
+        Behavior on opacity { NumberAnimation { duration: 100 } }
+
+        onClicked: {
+          if (dateSwitch.checked)
+            calendarDialog.show()
+        }
+      }
+    }// Item
+  }// Item
 
   CalendarDayYearDialog {
     id: calendarDialog
@@ -288,7 +327,7 @@ Item {
     tabFontSize: 8
 
     anchors {
-      top: calendarText.bottom
+      top: dateSettingItem.bottom
 //      topMargin: __margin
       bottom: parent.bottom
 //      bottomMargin: __margin

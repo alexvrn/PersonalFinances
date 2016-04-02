@@ -146,7 +146,7 @@ Window {
 
       onOpenControlFinances: {
         menuBackIcon.state = "back"
-        title.text = qsTr("Управление")
+        title.text = qsTr("Управление\nфинансами")
 
         DBController.statistic()
 
