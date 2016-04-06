@@ -37,6 +37,8 @@ Window {
     Material.ActionButton {
       id: menuBackButton
 
+      anchors.verticalCenter: appBar.verticalCenter
+
       Material.MenuBackIcon {
         id: menuBackIcon
         anchors.centerIn: parent
