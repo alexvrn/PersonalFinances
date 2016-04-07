@@ -28,5 +28,6 @@
         <file>icons/money.jpg</file>
         <file>InputDataComponent.qml</file>
         <file>icons/stat.jpg</file>
+        <file>InputDataDialog.qml</file>
     </qresource>
 </RCC>

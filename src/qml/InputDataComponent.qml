@@ -20,11 +20,12 @@ Item {
     //placeholderTextColor: StyleColor.inputTextColor
     placeholderText: "Введите комментарий"
     anchors {
-      left: parent.left
-      bottom: parent.bottom
-      bottomMargin: 1
+      left: root.left
+      leftMargin: Density.dp
+      bottom: root.bottom
+      bottomMargin: Density.dp
     }
-    width: parent.width * 0.67
+    width: root.width * 0.67
   }
   SpinBox {
     id: summaSpinBox
@@ -35,8 +36,8 @@ Item {
       left: commentText.right
       leftMargin: Density.dp
       verticalCenter: commentText.verticalCenter
-      right: parent.right
-      rightMargin: Density.dp
+      right: root.right
+      rightMargin: 40*Density.dp
     }
   }
 }

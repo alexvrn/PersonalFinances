@@ -11,7 +11,7 @@ Rectangle {
   property color tabTextColor
   property color highlightColor
   property int tabFontSize
-  property double сellWidth
+  property double cellWidth
 
   /*!
   This is the standard function to use for accessing device-independent pixels. You should use
@@ -52,7 +52,7 @@ Rectangle {
 
       delegate: Rectangle {
         id: tabItem
-        width: сellWidth
+        width: cellWidth
         //width: root.width / root.tabs.length
         //width: Math.max(label.contentWidth +dp(48), 88 * dp(1.0))
         height: tabbar.height

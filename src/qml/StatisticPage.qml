@@ -105,7 +105,7 @@ Item {
     tabBackgroundColor: "#089795"
     tabTextColor: "white"
     highlightColor: "yellow"
-    сellWidth: historyTabView.width / 3
+    cellWidth: historyTabView.width / 3
     tabFontSize: 8
 
     anchors {

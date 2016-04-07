@@ -276,21 +276,6 @@ Item {
 
   ListModel {
     id: financesTotalModel
-
-    Component.onCompleted: {
-      /*append({
-               comment: "покупка в перекрестке",
-               date: "21.06.2012",
-               summa: 34,
-               type: 1
-             });
-      append({
-               comment: "в кафе",
-               date: "24.06.2012",
-               summa: -34,
-               type: 0
-             });*/
-    }
   }
 
   ListModel {
@@ -303,18 +288,14 @@ Item {
 
   FinancesDelegate {
     id: totalDelegate
-    //modelType: 2
-    //widthDelegate: rootTotal.width
   }
 
   FinancesDelegate {
     id: additionDelegate
-    //modelType: 1
   }
 
   FinancesDelegate {
     id: deletionDelegate
-   // modelType: 0
   }
 
   Material.PaperTabView {
@@ -323,7 +304,7 @@ Item {
     tabBackgroundColor: StyleColor.mainFocusColor
     tabTextColor: "white"
     highlightColor: "yellow"
-    сellWidth: financesTabView.width / 3
+    cellWidth: width / 3
     tabFontSize: 8
 
     anchors {
@@ -335,7 +316,7 @@ Item {
 //      leftMargin: __margin
       right: parent.right
 //      rightMargin: __margin
-      bottomMargin: 20
+      bottomMargin: 10*Density.dp
       margins: __margin
     }
 
@@ -350,21 +331,12 @@ Item {
             left: rootTotal.left
             right: rootTotal.right
             top: rootTotal.top
-            bottom: totalDataComponent.top
+            bottom: rootTotal.bottom
           }
           financesModel: financesTotalModel
           financesDelegate: totalDelegate
         }
-        InputDataComponent {
-          id: totalDataComponent
-          anchors {
-            left: parent.left
-            right: parent.right
-            bottom: financesAdditionButton.top
-            bottomMargin: Density.dp
-          }
-        }
-        Material.PaperButton {
+        /*Material.PaperButton {
           id: financesAdditionButton
           text: "Добавить"
           color: StyleColor.mainColor
@@ -384,8 +356,8 @@ Item {
           onClicked: {
             var data = {}
             //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
-            data["comment"] = totalDataComponent.comment
-            data["summa"] = totalDataComponent.summa
+            data["comment"] = dataComponent.comment
+            data["summa"] = dataComponent.summa
             DBController.insert(data)
           }
 
@@ -401,32 +373,7 @@ Item {
               plus.state = "wait";
             }
           }
-        }
-        Material.PaperButton {
-          id: financesDeletionButton
-          text: "Удалить"
-          color: StyleColor.mainColor
-          focusColor: StyleColor.mainFocusColor
-          pressedColor: StyleColor.mainPressedColor
-          colored: true
-          anchors {
-            left: parent.horizontalCenter
-            right: parent.right
-            rightMargin: __margin
-            bottom: parent.bottom
-            bottomMargin: __margin
-          }
-          height: parent.height / 10
-
-          onClicked: {
-            var data = {}
-            data["date"] = Qt.formatDate(calendarDialog.date(), "dd.MM.yyyy")
-            data["comment"] = totalDataComponent.comment
-            data["summa"] = -totalDataComponent.summa
-            //DBController.insert(data)
-            plus.state = "error";
-          }
-        }
+        }*/
       }
     }
     Material.PaperTab {
@@ -440,45 +387,13 @@ Item {
             left: rootAddition.left
             right: rootAddition.right
             top: rootAddition.top
-            bottom: additionDataComponent.top
+            bottom: rootAddition.bottom
           }
           financesModel: financesAdditionModel
           financesDelegate: additionDelegate
         }
-        InputDataComponent {
-          id: additionDataComponent
-          anchors {
-            left: parent.left
-            right: parent.right
-            bottom: financesAdditionButton2.top
-            bottomMargin: Density.dp
-          }
-        }
-        Material.PaperButton {
-          id: financesAdditionButton2
-          text: "Добавить"
-          color: StyleColor.mainColor
-          focusColor: StyleColor.mainFocusColor
-          pressedColor: StyleColor.mainPressedColor
-          colored: true
-          anchors {
-            left: parent.left
-            leftMargin: __margin
-            right: parent.right
-            rightMargin: __margin
-            bottom: parent.bottom
-            bottomMargin: __margin
-          }
-          height: parent.height / 10
-        }
       }
     }
-    //Material.MaterialAdditionButton {
-    //  id: idd
-      //anchors.left: parent.left
-      //anchors.top: parent.top
-    //  anchors.centerIn: financesAdditionButton
-    //}
     Material.PaperTab {
       title: "Расход"
       Item {
@@ -490,148 +405,56 @@ Item {
             left: rootDeletion.left
             right: rootDeletion.right
             top: rootDeletion.top
-            bottom: deletionDataComponent.top
+            bottom: rootDeletion.bottom
           }
           financesModel: financesDeletionModel
           financesDelegate: deletionDelegate
         }
-        InputDataComponent {
-          id: deletionDataComponent
-          anchors {
-            left: parent.left
-            right: parent.right
-            bottom: financesDeletionButton2.top
-            bottomMargin: Density.dp
-          }
-        }
-        Material.PaperButton {
-          id: financesDeletionButton2
-          color: StyleColor.mainColor
-          focusColor: StyleColor.mainFocusColor
-          pressedColor: StyleColor.mainPressedColor
-          colored: true
-          text: "Удалить"
-          anchors {
-            left: parent.left
-            leftMargin: __margin
-            right: parent.right
-            rightMargin: __margin
-            bottom: parent.bottom
-            bottomMargin: __margin
-          }
-          height: parent.height / 10
-        }
       }
     }
+  }// TabView
+
+  InputDataDialog {
+    id: inputDataDialog
   }
 
-  /*Material.PaperTextField {
-    id: comment
-
-    placeholderText: "Комментарий"
+  Material.ActionButton {
+    id: controlButton
     anchors {
-      left: root.left
-      leftMargin: 20
-      right: root.right
-      rightMargin: 20
-      top: calendarText.bottom
-      topMargin: 20
-    }
-  }
-
-  Text {
-    id: summaLabel
-
-    text: "Сумма:"
-    anchors {
-      left: root.left
-      leftMargin: 20
-      top: comment.bottom
-      topMargin: 20
-    }
-  }
-
-  SpinBox {
-    id: summaSpinBox
-
-    minimumValue: 0
-    suffix: " руб."
-    anchors {
-      left: summaLabel.right
-      leftMargin: 15
-      verticalCenter: summaLabel.verticalCenter
-      right: root.right
-      rightMargin: 20
-    }
-  }
-
-  BusyIndicator {
-    id: processIndicator
-    width: 35
-    height: 35
-    anchors {
-      horizontalCenter: root.horizontalCenter
-      bottom: okButton.top
-      bottomMargin: 10
-    }
-    visible: false
-  }
-
-  Text {
-    id: iconResult
-    width: 35
-    height: 35
-    anchors {
-      horizontalCenter: root.horizontalCenter
-      bottom: okButton.top
-      bottomMargin: 35
-      horizontalCenterOffset: -15
+      right: parent.right
+      rightMargin: 15 * Density.dp
+      bottomMargin: 15 * Density.dp
+      bottom: parent.bottom
     }
 
-    text: __resultCalculate ? Icons.checked : Icons.close
-    color: __resultCalculate ? "#4CAF50" : "#F44336"
-
-    font.family: "Icons"
-    font.pixelSize: 70 * Density.dp
-
-    scale: 1
-    opacity: 1.0
-
-    Behavior on opacity {
-      NumberAnimation { duration: 300 }
-    }
-  }
-
-  Material.PaperButton {
-    id: okButton
-
-    radius: 3
-    color: "#4789c5"
-    colored: true
-    text: "OK"
-
-    anchors {
-      left: root.left
-      leftMargin: 2
-      right: root.right
-      rightMargin: 2
-      bottom: root.bottom
-      bottomMargin: 2
+    Material.MaterialShadow {
+      anchors.fill: controlButton
+      radius: controlButton.width
+      depth: 1
+      animated: true
     }
 
-    height: root.height / 10
+    Rectangle {
+      id: control
+      anchors {
+        fill: controlButton
+        leftMargin: 5*Density.dp
+        topMargin: 5*Density.dp
+      }
+      color: "#2E7D32"
+      radius: controlButton.width
+      opacity: 0.9
+    }
+
+    Text {
+     anchors.centerIn: control
+     text: Icons.menu
+     color: "white"
+     font.pointSize: 15
+    }
 
     onClicked: {
-      root.enabled = false
-      iconResult.opacity = 0.0
-      processIndicator.visible = true
-
-      var data = {}
-      data["date"] = calendarDialog.getDate();
-      data["comment"] = comment.text
-      data["summa"] = (state == "Addition") ? summaSpinBox.value : -summaSpinBox.value
-      data["type"] = state
-      DBController.insert(data)
+      inputDataDialog.show()
     }
-  }*/
+  }
 }

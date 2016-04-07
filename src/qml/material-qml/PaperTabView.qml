@@ -39,7 +39,7 @@ FocusScope {
   property color highlightColor: "yellow"
   property int tabFontSize: 11
   property double cellHeight: dp(48)
-  property double сellWidth: -1
+  property double cellWidth: -1
 
   default property alias data: stack.data
 
@@ -214,7 +214,7 @@ FocusScope {
     highlightColor: root.highlightColor
     height: root.cellHeight
     tabFontSize: root.tabFontSize
-    сellWidth: root.сellWidth
+    cellWidth: root.cellWidth
 
     anchors.left: root.left
     anchors.right: root.right
