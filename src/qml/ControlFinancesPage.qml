@@ -79,7 +79,7 @@ Item {
       // Если операция прошла успешно, то запрашиваем обновление информации
       if (result)
       {
-        if (dateCheck)
+        if (dateSwitch.checked)
           DBController.statistic(new Date(calendarDialog.year, calendarDialog.month))
         else
           DBController.statistic()
@@ -336,44 +336,6 @@ Item {
           financesModel: financesTotalModel
           financesDelegate: totalDelegate
         }
-        /*Material.PaperButton {
-          id: financesAdditionButton
-          text: "Добавить"
-          color: StyleColor.mainColor
-          focusColor: StyleColor.mainFocusColor
-          pressedColor: StyleColor.mainPressedColor
-          colored: true
-          anchors {
-            left: parent.left
-            leftMargin: __margin
-            right: parent.horizontalCenter
-            rightMargin: 3 * Density.dp
-            bottom: parent.bottom
-            bottomMargin: __margin
-          }
-          height: parent.height / 10
-
-          onClicked: {
-            var data = {}
-            //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
-            data["comment"] = dataComponent.comment
-            data["summa"] = dataComponent.summa
-            DBController.insert(data)
-          }
-
-          Material.ActionButton {
-            id: menuBackButton1
-            y: -50
-
-            Material.PaperAddButton {
-              id: plus
-              //anchors.fill: menuBackButton1
-            }
-            onClicked: {
-              plus.state = "wait";
-            }
-          }
-        }*/
       }
     }
     Material.PaperTab {
@@ -416,6 +378,22 @@ Item {
 
   InputDataDialog {
     id: inputDataDialog
+
+    onProfit: {
+      var data = {}
+      //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
+      data["comment"] = comment
+      data["summa"] = summa
+      DBController.insert(data)
+    }
+
+    onExpenditure: {
+      var data = {}
+      //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
+      data["comment"] = comment
+      data["summa"] = -summa
+      DBController.insert(data)
+    }
   }
 
   Material.ActionButton {
@@ -423,8 +401,8 @@ Item {
     anchors {
       right: parent.right
       rightMargin: 15 * Density.dp
-      bottomMargin: 15 * Density.dp
       bottom: parent.bottom
+      bottomMargin: 15 * Density.dp
     }
 
     Material.MaterialShadow {

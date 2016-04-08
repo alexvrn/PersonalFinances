@@ -9,8 +9,11 @@ Material.Dialog {
   id: root
   title: "Данные"
 
-  property string comment: commentText.month
-  property int summa: 0
+  property string comment: commentText.text
+  property int summa: summaSpinBox.value
+
+  signal profit(string comment, int summa) // Доход
+  signal expenditure(string comment, int summa) // Расход
 
   anchors {
     fill: parent
@@ -68,17 +71,20 @@ Material.Dialog {
       anchors {
         top: summaSpinBox.bottom
         topMargin: 2*Density.dp
-        left: parent.left
-        leftMargin: 10*Density.dp
+        right: parent.horizontalCenter
+        rightMargin: 10*Density.dp
       }
 
       Material.PaperAddButton {
         id: plus
+        anchors.centerIn: parent
       }
       onClicked: {
         comment = commentText.text
         summa = summaSpinBox.value
         plus.state = "wait";
+        profit(commentText.text, summaSpinBox.value)
+        close()
       }
     }
 
@@ -87,18 +93,21 @@ Material.Dialog {
       anchors {
         top: summaSpinBox.bottom
         topMargin: 2*Density.dp
-        right: root.right
+        left: parent.horizontalCenter
         leftMargin: 10*Density.dp
       }
 
       Material.PaperAddButton {
         id: minus
         type: "minus"
+        anchors.centerIn: parent
       }
       onClicked: {
         comment = commentText.text
         summa = -summaSpinBox.value
-        plus.state = "wait";
+        //plus.state = "wait";
+        expenditure(commentText.text, summaSpinBox.value)
+        close()
       }
     }
   }
