@@ -18,7 +18,7 @@ Item {
 
   Rectangle {
     id: background
-    color: "#0F9D58"
+    color: type == "add" ? "#0F9D58" : "#ef5350"
     width: __side
     height: __side
     radius:__side
