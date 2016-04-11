@@ -31,7 +31,10 @@ void DBWorker::insert(const QVariantMap& data)
   query.prepare(script);
   query.addBindValue(data["summa"]);
   query.addBindValue(data["comment"]);
-  query.addBindValue(QDate::currentDate().toJulianDay());
+  if (data["date"].isNull()) // Если дата не задана, берем текущую
+    query.addBindValue(QDate::currentDate().toJulianDay());
+  else
+    query.addBindValue(data["date"]);
   if (!query.exec())
   {
     qCritical("%s", query.lastError().text().toStdString().c_str());
@@ -47,11 +50,12 @@ void DBWorker::insert(const QVariantMap& data)
 void DBWorker::statistic(const QDate& date)
 {
   QString script("SELECT * FROM PersonalFinances");
-  if (!date.isNull()) // Если дата задана
+  if (!date.isNull()) // Если дата задана, то получаем всю инфу
   {
     // Сделано для того, чтобы меся в запросе был в формате mm
     QString month = QString("%1").arg(date.month(), 2, 10, QChar('0'));
     script += QString(" WHERE strftime('%m', date)='%1' AND strftime('%Y', date)='%2'").arg(month).arg(date.year());
+    qDebug() << script;
   }
 
   QSqlQuery query;

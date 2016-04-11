@@ -381,7 +381,12 @@ Item {
 
     onProfit: {
       var data = {}
-      //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
+      if (dateSwitch.checked) {
+        var currentDate = new Date();
+        // Если выбранная дата не совпадает с текущим месяцем, то считаем что это первый день выбранного месяца(01.xx.xxxx)
+        if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() != calendarDialog.year)
+          data["date"] = Qt.formatDate(calendarDialog.getDate(), "01.MM.yyyy")
+      }
       data["comment"] = comment
       data["summa"] = summa
       DBController.insert(data)
@@ -389,7 +394,12 @@ Item {
 
     onExpenditure: {
       var data = {}
-      //data["date"] = Qt.formatDate(calendarDialog.getDate(), "dd.MM.yyyy")
+      if (dateSwitch.checked) {
+        var currentDate = new Date();
+        // Если выбранная дата не совпадает с текущей датой, то считаем что это первый день выбранного месяца(01.xx.xxxx)
+        if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() == calendarDialog.year)
+          data["date"] = Qt.formatDate(calendarDialog.getDate(), "01.MM.yyyy")
+      }
       data["comment"] = comment
       data["summa"] = -summa
       DBController.insert(data)
