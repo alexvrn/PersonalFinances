@@ -63,7 +63,7 @@ Item {
     Image {
       id: statIcon
       fillMode: Image.Stretch
-      source: "qrc:/icons/stat.jpg"
+      //source: "qrc:/icons/stat.jpg"
       anchors.fill: parent
       opacity: 0.1
     }

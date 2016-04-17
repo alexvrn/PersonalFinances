@@ -64,6 +64,8 @@ Item {
 
   property int __margin: 2*Density.dp
 
+  property bool __process: false
+
   signal back
 
   Component.onCompleted: {
@@ -76,23 +78,30 @@ Item {
     onResultProcess: {
       __resultCalculate = result
 
+      __process = false;
+      var currentState = result ? "main" : "error";
+
       // Если операция прошла успешно, то запрашиваем обновление информации
       if (result)
       {
+        if (plus.state !== "main")
+          plus.state = currentState;
+        else if (minus.state !== "main")
+          minus.state = currentState
+
         if (dateSwitch.checked)
           DBController.statistic(new Date(calendarDialog.year, calendarDialog.month))
         else
           DBController.statistic()
       }
       else {
-        console.error("ERROR")
-      }
-//      root.enabled = true
-//      processIndicator.visible = false
-//      iconResult.opacity = 1.0
+        if (plus.state !== "main")
+          plus.state = currentState;
+        else if (minus.state !== "main")
+          minus.state = currentState;
 
-//      if (__resultCalculate) {
-//        cancelTimer.start()
+        console.error("error: " + comment)
+      }
     }
 
     onGetStatistic: {
@@ -159,7 +168,7 @@ Item {
       right: root.right
       rightMargin: 2*Density.dp
     }
-    height: root.height / 15
+    height: 30*Density.dp
 
     Material.PaperToogleButton {
       id: dateSwitch
@@ -305,18 +314,15 @@ Item {
     tabTextColor: "white"
     highlightColor: "yellow"
     cellWidth: width / 3
+    cellHeight: 30*Density.dp
     tabFontSize: 8
 
     anchors {
       top: dateSettingItem.bottom
-//      topMargin: __margin
       bottom: parent.bottom
-//      bottomMargin: __margin
       left: parent.left
-//      leftMargin: __margin
       right: parent.right
-//      rightMargin: __margin
-      bottomMargin: 10*Density.dp
+      bottomMargin: 54*Density.dp
       margins: __margin
     }
 
@@ -376,73 +382,112 @@ Item {
     }
   }// TabView
 
-  InputDataDialog {
-    id: inputDataDialog
+  Rectangle {
+    id: inputData
 
-    onProfit: {
-      var data = {}
-      if (dateSwitch.checked) {
-        var currentDate = new Date();
-        // Если выбранная дата не совпадает с текущим месяцем, то считаем что это первый день выбранного месяца(01.xx.xxxx)
-        if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() != calendarDialog.year)
-          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
-      }
-      data["comment"] = comment
-      data["summa"] = summa
-      DBController.insert(data)
-    }
-
-    onExpenditure: {
-      var data = {}
-      if (dateSwitch.checked) {
-        var currentDate = new Date();
-        // Если выбранная дата не совпадает с текущей датой, то считаем что это первый день выбранного месяца(01.xx.xxxx)
-        if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() == calendarDialog.year)
-          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
-      }
-      data["comment"] = comment
-      data["summa"] = -summa
-      DBController.insert(data)
-    }
-  }
-
-  Material.ActionButton {
-    id: controlButton
     anchors {
+      top: financesTabView.bottom
+      left: parent.left
       right: parent.right
-      rightMargin: 15 * Density.dp
       bottom: parent.bottom
-      bottomMargin: 15 * Density.dp
     }
 
-    Material.MaterialShadow {
-      anchors.fill: controlButton
-      radius: controlButton.width
-      depth: 1
-      animated: true
-    }
+    Material.PaperTextField {
+      id: commentText
 
-    Rectangle {
-      id: control
+      //textColor: StyleColor.inputTextColor
+      //placeholderTextColor: StyleColor.inputTextColor
+      placeholderText: "Введите комментарий"
       anchors {
-        fill: controlButton
-        leftMargin: 5*Density.dp
-        topMargin: 5*Density.dp
+        left: parent.left
+        right: parent.right
+        rightMargin: parent.width*0.4
+        verticalCenter: parent.verticalCenter
       }
-      color: "#2E7D32"
-      radius: controlButton.width
-      opacity: 0.9
+      //width: root.width * 0.67
     }
 
-    Text {
-     anchors.centerIn: control
-     text: Icons.menu
-     color: "white"
-     font.pointSize: 15
+    SpinBox {
+      id: summaSpinBox
+
+      minimumValue: 0
+      suffix: " руб."
+      anchors {
+        left: commentText.right
+        right: actionButtonPlus.left
+        //rightMargin: parent.width*0.2
+        verticalCenter: parent.verticalCenter
+      }
+      width: root.width
     }
 
-    onClicked: {
-      inputDataDialog.show()
+    Material.ActionButton {
+      id: actionButtonPlus
+      anchors {
+        top: parent.top
+        left: parent.right
+        leftMargin: -Density.dp*30
+        right: parent.right
+        bottom: parent.verticalCenter
+      }
+
+      Material.PaperAddButton {
+        id: plus
+        anchors.centerIn: parent
+      }
+      onClicked: {
+        if (__process)
+          return;
+
+        plus.state = "wait";
+        __process = true;
+
+        var data = {}
+        if (dateSwitch.checked) {
+          var currentDate = new Date();
+          // Если выбранная дата не совпадает с текущим месяцем, то считаем что это первый день выбранного месяца(01.xx.xxxx)
+          if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() != calendarDialog.year)
+            data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
+        }
+        data["comment"] = commentText.text
+        data["summa"] = summaSpinBox.value
+        DBController.insert(data)
+      }
+    }
+
+    Material.ActionButton {
+      id: actionButtonMinus
+      anchors {
+        top: parent.verticalCenter
+        right: parent.right
+        leftMargin: -Density.dp*30
+        left: parent.right
+        bottom: parent.bottom
+      }
+
+      Material.PaperAddButton {
+        id: minus
+        type: "minus"
+        anchors.centerIn: parent
+      }
+      onClicked: {
+        if (__process)
+          return;
+
+        minus.state = "wait";
+        __process = true;
+
+        var data = {}
+        if (dateSwitch.checked) {
+          var currentDate = new Date();
+          // Если выбранная дата не совпадает с текущей датой, то считаем что это первый день выбранного месяца(01.xx.xxxx)
+          if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() == calendarDialog.year)
+          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
+        }
+        data["comment"] = commentText.textColor
+        data["summa"] = -summaSpinBox.value
+        DBController.insert(data)
+      }
     }
   }
 }

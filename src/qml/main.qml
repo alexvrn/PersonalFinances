@@ -32,6 +32,7 @@ Window {
       right: parent.right
       top: parent.top
     }
+    height: 50 * Density.dp
     color: StyleColor.mainFocusColor
 
     Material.ActionButton {

@@ -152,8 +152,8 @@ Item {
       to: "error"
 
       SequentialAnimation {
-        PropertyAnimation { target: mainContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InOutQuad }
-        PropertyAnimation { target: errorContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InOutQuad }
+        PropertyAnimation { target: mainContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InQuad }
+        PropertyAnimation { target: errorContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InQuad }
       }
 
       //RotationAnimation { target: addButton; direction: RotationAnimation.Clockwise; duration: __animationDurationRotation; easing.type: Easing.Linear }
@@ -166,7 +166,7 @@ Item {
     Transition {
       to: "wait"
 
-      RotationAnimation { target: mainContainer; loops: Animation.Infinite; direction: RotationAnimation.Clockwise; duration: __animationDurationRotation; easing.type: Easing.Linear }
+      RotationAnimation { target: mainContainer; loops: Animation.Infinite; direction: RotationAnimation.Clockwise; duration: __animationDurationRotation; easing.type: Easing.InQuad }
       //PropertyAnimation { target: leftSide;   properties: "rotation, width, x, y"; duration: __animationDurationRotation; easing.type: Easing.InOutQuad }
       //PropertyAnimation { target: topSide;    properties: "rotation, width, x, y"; duration: __animationDurationRotation; easing.type: Easing.InOutQuad }
       //PropertyAnimation { target: rightSide;  properties: "rotation, width, x, y"; duration: __animationDurationRotation; easing.type: Easing.InOutQuad }
@@ -178,8 +178,8 @@ Item {
       from: "error"
 
       SequentialAnimation {
-        PropertyAnimation { target: errorContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InOutQuad }
-        PropertyAnimation { target: mainContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InOutQuad }
+        PropertyAnimation { target: errorContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InQuad }
+        PropertyAnimation { target: mainContainer; properties: "width, height"; duration: __animationDuration; easing.type: Easing.InQuad }
       }
     }
   ]

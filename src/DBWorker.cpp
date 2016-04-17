@@ -35,6 +35,7 @@ void DBWorker::insert(const QVariantMap& data)
     query.addBindValue(QDate::currentDate().toJulianDay());
   else
     query.addBindValue(data["date"]);
+
   if (!query.exec())
   {
     qCritical("%s", query.lastError().text().toStdString().c_str());
