@@ -385,7 +385,7 @@ Item {
         var currentDate = new Date();
         // Если выбранная дата не совпадает с текущим месяцем, то считаем что это первый день выбранного месяца(01.xx.xxxx)
         if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() != calendarDialog.year)
-          data["date"] = Qt.formatDate(calendarDialog.getDate(), "01.MM.yyyy")
+          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
       }
       data["comment"] = comment
       data["summa"] = summa
@@ -398,7 +398,7 @@ Item {
         var currentDate = new Date();
         // Если выбранная дата не совпадает с текущей датой, то считаем что это первый день выбранного месяца(01.xx.xxxx)
         if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() == calendarDialog.year)
-          data["date"] = Qt.formatDate(calendarDialog.getDate(), "01.MM.yyyy")
+          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
       }
       data["comment"] = comment
       data["summa"] = -summa
