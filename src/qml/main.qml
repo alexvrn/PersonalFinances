@@ -14,6 +14,8 @@ Window {
   visible: true
   width: 280
   height: 500
+  minimumHeight: 300
+  minimumWidth: 200
   title: qsTr("Бухгалтерия")
 
   // Запуск в полноэкранном режиме
