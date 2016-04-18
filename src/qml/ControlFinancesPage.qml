@@ -229,7 +229,7 @@ Item {
 
         color: "#616161"
         text: Qt.formatDate(new Date, "MM.yyyy") // ставим текущюю дату
-        font.pixelSize: 16*Density.dp
+        font.pixelSize: 11*Density.dp
         font.bold: true
         anchors {
           verticalCenter: calendarItem.verticalCenter
@@ -283,6 +283,78 @@ Item {
     }
   }
 
+  Item {
+    id: cash
+
+    anchors {
+      top: dateSettingItem.bottom
+      left: parent.left
+      right: parent.right
+    }
+    height: 20*Density.dp
+
+    Material.AnimatedText {
+      id: totalCash
+
+      color: "#0091ea"
+      text: "2000" + " .руб"
+      font.pixelSize: 11*Density.dp
+      //font.bold: true
+      anchors {
+        top: cash.top
+        verticalCenter: cash.verticalCenter
+        left: cash.left
+        bottom: cash.bottom
+      }
+      horizontalAlignment: Qt.AlignHCenter
+      width: root.width / 3
+      //animation: calendarText.flipAnimation
+      //opacity: dateSwitch.checked ? 1.0 : 0.3
+      Behavior on opacity { NumberAnimation { duration: 100 } }
+    }
+
+    Material.AnimatedText {
+      id: addCash
+
+      color: "#0F9D58"
+      text: "2000" + " .руб"
+      font.pixelSize: 11*Density.dp
+      font.bold: true
+      anchors {
+        top: cash.top
+        verticalCenter: cash.verticalCenter
+        left: totalCash.right
+        right: delCash.left
+        bottom: cash.bottom
+      }
+      horizontalAlignment: Qt.AlignHCenter
+      width: root.width / 3
+      //animation: calendarText.flipAnimation
+      //opacity: dateSwitch.checked ? 1.0 : 0.3
+      Behavior on opacity { NumberAnimation { duration: 100 } }
+    }
+
+    Material.AnimatedText {
+      id: delCash
+
+      color: "#ef5350"
+      text: "2000" + " .руб"
+      font.pixelSize: 11*Density.dp
+      font.bold: true
+      anchors {
+        top: cash.top
+        verticalCenter: cash.verticalCenter
+        right: cash.right
+        bottom: cash.bottom
+      }
+      horizontalAlignment: Qt.AlignHCenter
+      width: root.width / 3
+      //animation: calendarText.flipAnimation
+      //opacity: dateSwitch.checked ? 1.0 : 0.3
+      Behavior on opacity { NumberAnimation { duration: 100 } }
+    }
+  }
+
   ListModel {
     id: financesTotalModel
   }
@@ -315,10 +387,10 @@ Item {
     highlightColor: "yellow"
     cellWidth: width / 3
     cellHeight: 30*Density.dp
-    tabFontSize: 8
+    tabFontSize: 7*Density.dp
 
     anchors {
-      top: dateSettingItem.bottom
+      top: cash.bottom
       bottom: parent.bottom
       left: parent.left
       right: parent.right
