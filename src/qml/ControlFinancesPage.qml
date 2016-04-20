@@ -66,6 +66,10 @@ Item {
 
   property bool __process: false
 
+  property int __total: 0
+  property int __income: 0
+  property int __consumption: 0
+
   signal back
 
   Component.onCompleted: {
@@ -136,6 +140,10 @@ Item {
             type: 0
           });
       }
+
+      __total = total;
+      __income = income;
+      __consumption = consumption;
     }
   }
 
@@ -297,7 +305,7 @@ Item {
       id: totalCash
 
       color: "#0091ea"
-      text: "2000" + " .руб"
+      text: __total + " .руб"
       font.pixelSize: 11*Density.dp
       //font.bold: true
       anchors {
@@ -308,16 +316,15 @@ Item {
       }
       horizontalAlignment: Qt.AlignHCenter
       width: root.width / 3
-      //animation: calendarText.flipAnimation
+      animation: totalCash.flipAnimation
       //opacity: dateSwitch.checked ? 1.0 : 0.3
-      Behavior on opacity { NumberAnimation { duration: 100 } }
     }
 
     Material.AnimatedText {
       id: addCash
 
       color: "#0F9D58"
-      text: "2000" + " .руб"
+      text: __income + " .руб"
       font.pixelSize: 11*Density.dp
       font.bold: true
       anchors {
@@ -331,14 +338,13 @@ Item {
       width: root.width / 3
       //animation: calendarText.flipAnimation
       //opacity: dateSwitch.checked ? 1.0 : 0.3
-      Behavior on opacity { NumberAnimation { duration: 100 } }
     }
 
     Material.AnimatedText {
       id: delCash
 
       color: "#ef5350"
-      text: "2000" + " .руб"
+      text: __consumption + " .руб"
       font.pixelSize: 11*Density.dp
       font.bold: true
       anchors {
@@ -351,7 +357,6 @@ Item {
       width: root.width / 3
       //animation: calendarText.flipAnimation
       //opacity: dateSwitch.checked ? 1.0 : 0.3
-      Behavior on opacity { NumberAnimation { duration: 100 } }
     }
   }
 

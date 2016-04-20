@@ -25,7 +25,7 @@ DBController::DBController(const QString& dbFileName, QObject *parent)
 
   m_dbWorker->moveToThread(m_thread);
   connect(m_dbWorker, SIGNAL(resultProcess(bool,QString)), SIGNAL(resultProcess(bool,QString)));
-  connect(m_dbWorker, SIGNAL(getStatistic(QVariantList)), SIGNAL(getStatistic(QVariantList)));
+  connect(m_dbWorker, SIGNAL(getStatistic(QVariantList,int,int,int)), SIGNAL(getStatistic(QVariantList,int,int,int)));
 
   loadFromFile(dbFileName);
 }

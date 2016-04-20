@@ -69,15 +69,25 @@ void DBWorker::statistic(const QDate& date)
   else
   {
     QVariantList result;
+    int total = 0;
+    int income = 0;
+    int consumption = 0;
     while (query.next())
     {
+      int summa = query.value("summa").toInt();
       QVariantMap v;
       v["id"] = query.value("id");
-      v["summa"] = query.value("summa").toInt();
+      v["summa"] = summa;
       v["comment"] = query.value("comment");
       v["date"] = QDate::fromJulianDay(query.value("date").toInt()).toString("dd.MM.yyyy");
       result.append(v);
+
+      total += summa;
+      if (summa >= 0)
+        income += summa;
+      else
+        consumption += summa;
     }
-    emit getStatistic(result);
+    emit getStatistic(result, total, income, qAbs(consumption));
   }
 }

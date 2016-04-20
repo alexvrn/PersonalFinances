@@ -21,7 +21,7 @@ class DBController : public QObject
   signals:
     void resultProcess(bool result, const QString& comment = QString());
     void totalData(const QVariantList& data);
-    void getStatistic(const QVariantList& data);
+    void getStatistic(const QVariantList& data, int total = 0, int income = 0, int consumption = 0);
 
   public slots:
     void insert(const QVariantMap& data);// TODO: переименовать
