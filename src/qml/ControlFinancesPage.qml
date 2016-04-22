@@ -86,17 +86,38 @@ Item {
       var currentState = result ? "main" : "error";
 
       // Если операция прошла успешно, то запрашиваем обновление информации
-      if (result)
-      {
+      if (result) {
+        financesTotalModel.append({
+          id: resultData["id"],
+          comment: resultData["comment"],
+          date: resultData["date"],
+          summa: resultData["summa"],
+          type: (resultData["summa"] > 0) ? 1 : 0
+        });
+
+        if (resultData["summa"] > 0)
+          financesAdditionModel.append({
+            id: resultData["id"],
+            comment: resultData["comment"],
+            date: resultData["date"],
+            summa: resultData["summa"],
+            type: 1
+          });
+        else
+          financesDeletionModel.append({
+            id: resultData["id"],
+            comment: resultData["comment"],
+            date: resultData["date"],
+            summa: resultData["summa"],
+            type: 0
+          });
+
         if (plus.state !== "main")
           plus.state = currentState;
         else if (minus.state !== "main")
           minus.state = currentState
 
-        if (dateSwitch.checked)
-          DBController.statistic(new Date(calendarDialog.year, calendarDialog.month))
-        else
-          DBController.statistic()
+        DBController.statistic(new Date(calendarDialog.year, calendarDialog.month))
       }
       else {
         if (plus.state !== "main")
@@ -109,37 +130,37 @@ Item {
     }
 
     onGetStatistic: {
-      financesTotalModel.clear()
-      financesAdditionModel.clear()
-      financesDeletionModel.clear()
+      //financesTotalModel.clear()
+      //financesAdditionModel.clear()
+      //financesDeletionModel.clear()
 
-      for (var i = 0; i < data.length; i++) {
-        var v = data[i]
-        financesTotalModel.append({
-          id: v["id"],
-          comment: v["comment"],
-          date: v["date"],
-          summa: v["summa"],
-          type: (v["summa"] > 0) ? 1 : 0
-        });
+//      for (var i = 0; i < data.length; i++) {
+//        var v = data[i]
+//        financesTotalModel.append({
+//          id: v["id"],
+//          comment: v["comment"],
+//          date: v["date"],
+//          summa: v["summa"],
+//          type: (v["summa"] > 0) ? 1 : 0
+//        });
 
-        if (v["summa"] > 0)
-          financesAdditionModel.append({
-            id: v["id"],
-            comment: v["comment"],
-            date: v["date"],
-            summa: v["summa"],
-            type: 1
-          });
-        else
-          financesDeletionModel.append({
-            id: v["id"],
-            comment: v["comment"],
-            date: v["date"],
-            summa: v["summa"],
-            type: 0
-          });
-      }
+//        if (v["summa"] > 0)
+//          financesAdditionModel.append({
+//            id: v["id"],
+//            comment: v["comment"],
+//            date: v["date"],
+//            summa: v["summa"],
+//            type: 1
+//          });
+//        else
+//          financesDeletionModel.append({
+//            id: v["id"],
+//            comment: v["comment"],
+//            date: v["date"],
+//            summa: v["summa"],
+//            type: 0
+//          });
+//      }
 
       __total = total;
       __income = income;
@@ -178,25 +199,6 @@ Item {
     }
     height: 30*Density.dp
 
-    Material.PaperToogleButton {
-      id: dateSwitch
-
-      checked: false
-      anchors {
-        verticalCenter: dateSettingItem.verticalCenter
-        left: dateSettingItem.left
-        leftMargin: 2*Density.dp
-      }
-
-      onCheckedChanged: {
-        // Отправляем запрос БД
-        if (checked)
-          DBController.statistic(new Date(calendarDialog.year, calendarDialog.month));
-        else
-          DBController.statistic();
-      }
-    }
-
 
   /*Material.PaperCheckBox {
     id: dateCheck
@@ -227,10 +229,9 @@ Item {
       anchors {
         right: dateSettingItem.right
         rightMargin: 2*Density.dp
-        verticalCenter: dateSwitch.verticalCenter
-        left: dateSwitch.right
+        verticalCenter: parent.verticalCenter
       }
-      height: dateSwitch.height
+      height: parent.height
 
       Material.AnimatedText {
         id: calendarText
@@ -245,8 +246,6 @@ Item {
           rightMargin: 10*Density.dp
         }
         animation: calendarText.flipAnimation
-        opacity: dateSwitch.checked ? 1.0 : 0.3
-        Behavior on opacity { NumberAnimation { duration: 100 } }
       }
 
       Material.GlowShadow {
@@ -269,12 +268,8 @@ Item {
 
         z: 100
 
-        opacity: dateSwitch.checked ? 1.0 : 0.3
-        Behavior on opacity { NumberAnimation { duration: 100 } }
-
         onClicked: {
-          if (dateSwitch.checked)
-            calendarDialog.show()
+          calendarDialog.show()
         }
       }
     }// Item
@@ -301,6 +296,11 @@ Item {
     }
     height: 20*Density.dp
 
+    Rectangle {
+      anchors.fill: cash
+      color: "white"
+    }
+
     Material.AnimatedText {
       id: totalCash
 
@@ -317,7 +317,6 @@ Item {
       horizontalAlignment: Qt.AlignHCenter
       width: root.width / 3
       animation: totalCash.flipAnimation
-      //opacity: dateSwitch.checked ? 1.0 : 0.3
     }
 
     Material.AnimatedText {
@@ -336,8 +335,7 @@ Item {
       }
       horizontalAlignment: Qt.AlignHCenter
       width: root.width / 3
-      //animation: calendarText.flipAnimation
-      //opacity: dateSwitch.checked ? 1.0 : 0.3
+      animation: addCash.flipAnimation
     }
 
     Material.AnimatedText {
@@ -355,8 +353,7 @@ Item {
       }
       horizontalAlignment: Qt.AlignHCenter
       width: root.width / 3
-      //animation: calendarText.flipAnimation
-      //opacity: dateSwitch.checked ? 1.0 : 0.3
+      animation: delCash.flipAnimation
     }
   }
 
@@ -520,15 +517,9 @@ Item {
         __process = true;
 
         var data = {}
-        if (dateSwitch.checked) {
-          var currentDate = new Date();
-          // Если выбранная дата не совпадает с текущим месяцем, то считаем что это первый день выбранного месяца(01.xx.xxxx)
-          if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() != calendarDialog.year)
-            data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
-        }
-        data["comment"] = commentText.text
+        data["comment"] = commentText.textColor
         data["summa"] = summaSpinBox.value
-        DBController.insert(data)
+        DBController.insert(data, calendarDialog.year, calendarDialog.month)
       }
     }
 
@@ -555,15 +546,9 @@ Item {
         __process = true;
 
         var data = {}
-        if (dateSwitch.checked) {
-          var currentDate = new Date();
-          // Если выбранная дата не совпадает с текущей датой, то считаем что это первый день выбранного месяца(01.xx.xxxx)
-          if (currentDate.getMonth() != calendarDialog.month || currentDate.getFullYear() == calendarDialog.year)
-          data["date"] = Qt.formatDate(calendarDialog.date(), "01.MM.yyyy")
-        }
         data["comment"] = commentText.textColor
         data["summa"] = -summaSpinBox.value
-        DBController.insert(data)
+        DBController.insert(data, calendarDialog.year, calendarDialog.month)
       }
     }
   }

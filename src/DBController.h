@@ -19,12 +19,12 @@ class DBController : public QObject
     ~DBController();
 
   signals:
-    void resultProcess(bool result, const QString& comment = QString());
+    void resultProcess(bool result, const QVariantMap& resultData = QVariantMap(), const QString& comment = QString());
     void totalData(const QVariantList& data);
     void getStatistic(const QVariantList& data, int total = 0, int income = 0, int consumption = 0);
 
   public slots:
-    void insert(const QVariantMap& data);// TODO: переименовать
+    void insert(const QVariantMap& data, int year = -1, int month = -1, int day = -1);// TODO: переименовать
     void statistic(const QDate& date = QDate());// TODO: переименовать
 
   private:

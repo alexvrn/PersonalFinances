@@ -24,7 +24,7 @@ DBController::DBController(const QString& dbFileName, QObject *parent)
   m_thread->start();
 
   m_dbWorker->moveToThread(m_thread);
-  connect(m_dbWorker, SIGNAL(resultProcess(bool,QString)), SIGNAL(resultProcess(bool,QString)));
+  connect(m_dbWorker, SIGNAL(resultProcess(bool,QVariantMap,QString)), SIGNAL(resultProcess(bool,QVariantMap,QString)));
   connect(m_dbWorker, SIGNAL(getStatistic(QVariantList,int,int,int)), SIGNAL(getStatistic(QVariantList,int,int,int)));
 
   loadFromFile(dbFileName);
@@ -85,9 +85,12 @@ void DBController::loadFromFile(const QString& dbFileName)
 }
 
 
-void DBController::insert(const QVariantMap& data)
+void DBController::insert(const QVariantMap& data, int year, int month, int day)
 {
-  QMetaObject::invokeMethod(m_dbWorker, "insert", Qt::QueuedConnection, Q_ARG(QVariantMap, data));
+  QMetaObject::invokeMethod(m_dbWorker, "insert", Qt::QueuedConnection, Q_ARG(QVariantMap, data),
+                                                                        Q_ARG(int, year),
+                                                                        Q_ARG(int, month),
+                                                                        Q_ARG(int, day));
 }
 
 

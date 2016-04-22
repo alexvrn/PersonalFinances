@@ -63,7 +63,7 @@ Component {
 
       Text {
         id: commentText
-        text: comment
+        text: summa + "; " + comment
         color: "black"
         font.family: 'Roboto'
         font.pointSize: 10*Density.dp
