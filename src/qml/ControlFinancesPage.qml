@@ -496,7 +496,7 @@ Item {
 //      width: root.width
 //    }
 
-    Calculator.Calculator {
+    Calculator.CalculatorDialog {
       id: calculator
 
       width: 250*Density.dp
