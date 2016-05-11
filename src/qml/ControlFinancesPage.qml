@@ -4,6 +4,7 @@ import QtQuick.Controls 1.2
 import "icons.js" as Icons
 
 import "material-qml" as Material
+import "material-qml/calculator" as Calculator
 import "material-qml/density.js" as Density
 import "StyleColor.js" as StyleColor
 
@@ -481,18 +482,48 @@ Item {
       //width: root.width * 0.67
     }
 
-    SpinBox {
-      id: summaSpinBox
+//    SpinBox {
+//      id: summaSpinBox
 
-      minimumValue: 0
-      suffix: " руб."
+//      minimumValue: 0
+//      suffix: " руб."
+//      anchors {
+//        left: commentText.right
+//        right: actionButtonPlus.left
+//        //rightMargin: parent.width*0.2
+//        verticalCenter: parent.verticalCenter
+//      }
+//      width: root.width
+//    }
+
+    Calculator.Calculator {
+      id: calculator
+
+      width: 250*Density.dp
+      height: 400*Density.dp
+
+      onGetValue: {
+        summa.text = value
+      }
+    }
+
+    Material.PaperTextField {
+      id: summa
+      placeholderText: "Сумма"
       anchors {
         left: commentText.right
+        leftMargin: 3*Density.dp
         right: actionButtonPlus.left
         //rightMargin: parent.width*0.2
         verticalCenter: parent.verticalCenter
       }
+      textHorizontalAlignment: TextInput.AlignRight
       width: root.width
+
+      onFocusChanged: {
+        calculator.value = summa.text
+        calculator.show()
+      }
     }
 
     Material.ActionButton {
@@ -518,7 +549,7 @@ Item {
 
         var data = {}
         data["comment"] = commentText.textColor
-        data["summa"] = summaSpinBox.value
+        data["summa"] = summaSpinBox.text
         DBController.insert(data, calendarDialog.year, calendarDialog.month)
       }
     }
@@ -547,7 +578,7 @@ Item {
 
         var data = {}
         data["comment"] = commentText.textColor
-        data["summa"] = -summaSpinBox.value
+        data["summa"] = -summaSpinBox.text
         DBController.insert(data, calendarDialog.year, calendarDialog.month)
       }
     }

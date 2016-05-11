@@ -17,6 +17,7 @@ FocusScope {
   property alias inputMethodComposing: textInput.inputMethodComposing
   property alias inputMethodHints: textInput.inputMethodHints
   property alias displayText: textInput.displayText
+  property alias textHorizontalAlignment: textInput.horizontalAlignment
 
   property alias tipText: tip.text
   property alias tipVisible: tip.visible

@@ -99,5 +99,7 @@
         <file>PaperTabBar.qml</file>
         <file>PaperTabView.qml</file>
         <file>PaperAddButton.qml</file>
+        <file>calculator/Calculator.qml</file>
+        <file>calculator/CalculatorButton.qml</file>
     </qresource>
 </RCC>
