@@ -19,7 +19,7 @@ Material.Dialog {
     summa.floatingLabel = false
   }
 
-  function calculation(isNumber, operation) {
+  function calculation(isNumber, operation, type) {
     // Если число
     if (isNumber) {
       if (__isOperation) {
@@ -35,23 +35,23 @@ Material.Dialog {
     }
     // Если операция
     else {
-      if (operation === "C") {
+      if (type === "clear") {
         clear()
       }
-      else if (operation === "=") {
+      else if (type === "eval") {
         __isOperation = true
         summa.placeholderText += summa.text
         summa.text = eval(summa.placeholderText)
         summa.placeholderText = ""
         summa.floatingLabel = false
       }
-      else if (operation === "←") {
+      else if (type === "back") {
         var s = summa.text.slice(0, -1);
         if (s === "" || s === "-")
           s = "0"
         summa.text = s
       }
-      else if (operation === "±") {
+      else if (type === "negative") {
         summa.text = eval("-1*" + summa.text);
       }
       else {
@@ -76,6 +76,8 @@ Material.Dialog {
       rightMargin: 20*Density.dp
     }
     text: value
+    textReadOnly: true
+    tipVisible: true
   }
 
 
@@ -99,8 +101,8 @@ Material.Dialog {
     CalculatorButton { color: "#03a9f4"; text: "MS"; }
     CalculatorButton { color: "#03a9f4"; text: "M+"; }
     CalculatorButton { color: "#03a9f4"; text: "M-"; }
-    CalculatorButton { color: "#ff5722"; text: "C";  }
-    CalculatorButton { color: "#ff5722"; text: "←"; }
+    CalculatorButton { color: "#ff5722"; text: "C"; type: "clear" }
+    CalculatorButton { color: "#ff5722"; text: "←"; type: "back"}
     CalculatorButton { color: "#757575"; text: "7"; isNumber: true}
     CalculatorButton { color: "#757575"; text: "8"; isNumber: true}
     CalculatorButton { color: "#757575"; text: "9"; isNumber: true}
@@ -114,9 +116,9 @@ Material.Dialog {
     CalculatorButton { color: "#757575"; text: "1"; isNumber: true}
     CalculatorButton { color: "#757575"; text: "2"; isNumber: true}
     CalculatorButton { color: "#757575"; text: "3"; isNumber: true}
-    CalculatorButton { color: "#4caf50"; text: "="; }
+    CalculatorButton { color: "#4caf50"; text: "="; type: "eval"}
     CalculatorButton { color: "#4caf50"; text: "+"; }
-    CalculatorButton { color: "#4caf50"; text: "±"; }
+    CalculatorButton { color: "#4caf50"; text: "±"; type: "negative"}
     CalculatorButton { color: "#757575"; text: "0"; isNumber: true}
     CalculatorButton { color: "#4caf50"; text: "."; isNumber: true;}
   }

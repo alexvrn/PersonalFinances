@@ -30,6 +30,8 @@ FocusScope {
   property alias inputMask: textInput.inputMask
   property bool floatingLabel: false
 
+  property bool textReadOnly: false
+
   activeFocusOnTab: true
 
   property int __fontSize: 16 * Density.dp
@@ -109,6 +111,8 @@ FocusScope {
     anchors.top: parent.top
     anchors.topMargin: (floatingLabel ? 37 : 13) * Density.dp // QML TextInput adds 3sp space above the text
     width: parent.width
+
+    readOnly: textReadOnly
 
     focus: root.focus
     selectByMouse: true
