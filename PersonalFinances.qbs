@@ -9,6 +9,7 @@ Project {
     files: [ "src/*",
              "src/qml/material-qml/*",
              "src/qml/material-qml/calculator/*",
+             "src/qml/material-qml/timepicker/*",
              "src/qml/*",
              "src/qml/icons/*",
              "src/qml/picker/*",

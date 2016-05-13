@@ -101,5 +101,6 @@
         <file>PaperAddButton.qml</file>
         <file>calculator/CalculatorButton.qml</file>
         <file>calculator/CalculatorDialog.qml</file>
+        <file>timepicker/TimeDialog.qml</file>
     </qresource>
 </RCC>

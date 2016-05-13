@@ -29,5 +29,6 @@
         <file>InputDataComponent.qml</file>
         <file>icons/stat.jpg</file>
         <file>InputDataDialog.qml</file>
+        <file>material-qml/timepicker/Time.qml</file>
     </qresource>
 </RCC>

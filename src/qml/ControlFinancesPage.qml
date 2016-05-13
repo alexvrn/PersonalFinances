@@ -5,6 +5,7 @@ import "icons.js" as Icons
 
 import "material-qml" as Material
 import "material-qml/calculator" as Calculator
+import "material-qml/timepicker" as Time
 import "material-qml/density.js" as Density
 import "StyleColor.js" as StyleColor
 
@@ -497,7 +498,7 @@ Item {
 //    }
 
     Calculator.CalculatorDialog {
-      id: calculator
+      id: calculatorDialog
 
       width: 250*Density.dp
       height: 400*Density.dp
@@ -505,6 +506,13 @@ Item {
       onGetValue: {
         summa.text = value
       }
+    }
+
+    Time.TimeDialog {
+      id: timeDialog
+
+      width: 250*Density.dp
+      height: 400*Density.dp
     }
 
     Material.PaperTextField {
@@ -521,8 +529,9 @@ Item {
       width: root.width
 
       onFocusChanged: {
-        calculator.value = summa.text
-        calculator.show()
+        //calculatorDialog.value = summa.text
+        //calculatorDialog.show()
+        timeDialog.show()
       }
     }
 
