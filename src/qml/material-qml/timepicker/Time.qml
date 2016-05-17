@@ -26,7 +26,7 @@ Rectangle {
 
   property var __hours: [6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 7]
   //property var __hoursPM: [18, 17, 16, 15, 14, 13, 0, 23, 22, 21, 20, 19]
-  property var __minuts: [30, 25, 20, 15, 10, 5, 0, 55, 50, 45, 40, 35]
+  property var __minuts: []
 
   property var __hourParts: []
   property var __minutParts: []
@@ -36,15 +36,22 @@ Rectangle {
   property int hour: 0
   property int minut: 0
 
+  signal selectClock(int value, int mode)
 
   Component.onCompleted: {
+    //[30, 29, ..., 1, 0, 59, 58, ..., 32, 31]
+    for (var i = 30; i >= 0; i--)
+      __minuts.push(i)
+    for (i = 59; i >= 31; i--)
+      __minuts.push(i)
+
     clear()
   }
 
   Timer {
     id: changeStateTimer
     interval: 50; running: false; repeat: true
-    property int delta: 0
+    property int delta: 0 // индикатор итерации
     onTriggered: {
       if (__mode === __caseMinute) {
         __hourRadius += Density.dp
@@ -86,6 +93,7 @@ Rectangle {
   }
 
   function selectHour() {
+    // Если нтаймер еще не закончил работу
     if (changeStateTimer.triggeredOnStart)
       return;
 
@@ -97,6 +105,7 @@ Rectangle {
   }
 
   function selectMinute() {
+    // Если нтаймер еще не закончил работу
     if (changeStateTimer.triggeredOnStart)
       return;
 
@@ -110,10 +119,10 @@ Rectangle {
   function clear() {
     __hourParts = []
     __minutParts = []
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < __hours.length; i++)
       __hourParts.push({x: 0, y: 0})
+    for (i = 0; i < __minuts.length; i++)
       __minutParts.push({x: 0, y: 0})
-    }
 
     __mode = __caseHour
 
@@ -123,10 +132,10 @@ Rectangle {
 
     // Получение текущего времени
     var date = new Date()
-    hour = 9//date.getHours()
-    minut = 25//date.getMinutes()
-    console.debug(hour)
-    console.debug(minut)
+    hour = (date.getHours() > 12) ? (date.getHours() - 12) : date.getHours()
+    minut = date.getMinutes()
+    selectClock(hour, __caseHour)
+    selectClock(minut, __caseMinute)
 
     calcClock();
 
@@ -134,13 +143,17 @@ Rectangle {
   }
 
   function calcClock() {
-    for (var i = 0; i < 12; i++) {
-      var angle = i * Math.PI / 6
+    var angle;
+    for (var i = 0; i < __hourParts.length; i++) {
+      angle = i * Math.PI / 6
       var hourPointX = __centerX + __hourRadius*0.9 * Math.sin(angle)
       var hourPointY = __centerY + __hourRadius*0.9 * Math.cos(angle)
+      __hourParts[i] = {x: hourPointX, y: hourPointY}
+    }
+    for (i = 0; i < __minutParts.length; i++) {
+      angle = i * Math.PI / 30
       var minutPointX = __centerX + __minutRadius*0.9 * Math.sin(angle)
       var minutPointY = __centerY + __minutRadius*0.9 * Math.cos(angle)
-      __hourParts[i] = {x: hourPointX, y: hourPointY}
       __minutParts[i] = {x: minutPointX, y: minutPointY}
     }
   }
@@ -176,14 +189,14 @@ Rectangle {
 
       // Большой круг скраю
       ctx.beginPath();
-      ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
+      ctx.fillStyle =  Qt.rgba(0.01, 0.47, 0.74, __textOpacity);//"#0277bd"
       ctx.ellipse(__hourCurrentX - bigRadius, __hourCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
       ctx.fill();
       ctx.closePath();
 
       // Стрелка
       ctx.beginPath();
-      ctx.strokeStyle = Qt.rgba(0,0,0, __textOpacity);
+      ctx.strokeStyle = Qt.rgba(0.01, 0.47, 0.74, __textOpacity);//"#0277bd"
       ctx.lineWidth = 3
       ctx.moveTo(__centerX, __centerY);
       ctx.lineTo(__hourCurrentX, __hourCurrentY);
@@ -192,14 +205,14 @@ Rectangle {
 
       // Большой круг скраю
       ctx.beginPath();
-      ctx.fillStyle = Qt.rgba(0,0,0, 1.0 - __textOpacity);
+      ctx.fillStyle = Qt.rgba(0.01, 0.47, 0.74, 1.0 - __textOpacity);//"#0277bd"
       ctx.ellipse(__minuteCurrentX - bigRadius, __minuteCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
       ctx.fill();
       ctx.closePath();
 
       // Стрелка
       ctx.beginPath();
-      ctx.strokeStyle = Qt.rgba(0,0,0, 1.0 - __textOpacity);
+      ctx.strokeStyle = Qt.rgba(0.01, 0.47, 0.74, 1.0 - __textOpacity);//"#0277bd"
       ctx.lineWidth = 3
       ctx.moveTo(__centerX, __centerY);
       ctx.lineTo(__minuteCurrentX, __minuteCurrentY);
@@ -230,7 +243,7 @@ Rectangle {
       ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
       ctx.lineWidth = 1
       ctx.textAlign="center";
-      for (var i = 0; i < 12; i++)
+      for (var i = 0; i < __hours.length; i++)
         ctx.fillText(__hours[i], __hourParts[i].x, __hourParts[i].y)
       ctx.closePath();
 
@@ -238,8 +251,10 @@ Rectangle {
       ctx.beginPath();
       ctx.fillStyle = Qt.rgba(0,0,0, 1 - __textOpacity);
       ctx.lineWidth = 1
-      for (i = 0; i < 12; i++)
-        ctx.fillText(__minuts[i], __minutParts[i].x, __minutParts[i].y)
+      for (i = 0; i < __minuts.length; i++) {
+        if (i%5 === 0)
+          ctx.fillText(__minuts[i], __minutParts[i].x, __minutParts[i].y)
+      }
       ctx.closePath();
     }
 
@@ -254,29 +269,33 @@ Rectangle {
         if (!inEllipse(__centerX, __centerY, __radius, x, y))
           return
 
-        //
+        // Если нтаймер еще не закончил работу
         if (changeStateTimer.triggeredOnStart)
           return
 
-        for (var i = 0; i < 12; i++) {
-          switch (__mode) {
-            case __caseHour:
+        switch (__mode) {
+          case __caseHour:
+            for (var i = 0; i < __hourParts.length; i++) {
               if (inEllipse(__hourParts[i].x, __hourParts[i].y, 10*Density.dp, x, y)) {
                 __mode = __caseMinute
                 hour = __hours[i]
                 changeStateTimer.start()
+                selectClock(hour, __caseHour)
                 return
               }
-              break
-            case __caseMinute:
+            }
+            break
+          case __caseMinute:
+            for (i = 0; i < __minutParts.length; i++) {
               if (inEllipse(__minutParts[i].x, __minutParts[i].y, 10*Density.dp, x, y)) {
                 minut = __minuts[i]
                 canvas.requestPaint()
+                selectClock(minut, __caseMinute)
               }
-              break
-            default:
-          }//switch
-        }//for
+            }
+            break
+          default: console.warn("unknown type: " + __mode)
+        }//switch
       }//onClicked
     }
   }
