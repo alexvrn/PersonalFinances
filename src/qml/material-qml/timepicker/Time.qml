@@ -16,61 +16,124 @@ Rectangle {
 
   property int __mode: __caseHour
 
-  property int __radius:  width * 0.3
-  property int __hourRadius:  width * 0.3
-  property int __minutRadius:  width * 0.3
+  property int __radius:  width * 0.5
+  property int __hourRadius:  width * 0.4
+  //property int __hourRadiusPM:  width * 0.3
+  property int __minutRadius:  width * 0.4
 
-  property int __centerX:  width / 2
-  property int __centerY:  width / 2
+  property int __centerX:  width * 0.5
+  property int __centerY:  width * 0.5
 
-  property var __hours: [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]
+  property var __hours: [6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 7]
+  //property var __hoursPM: [18, 17, 16, 15, 14, 13, 0, 23, 22, 21, 20, 19]
   property var __minuts: [30, 25, 20, 15, 10, 5, 0, 55, 50, 45, 40, 35]
 
   property var __hourParts: []
   property var __minutParts: []
 
-  property int __currentX: 0
-  property int __currentY: 0
-
   property double __textOpacity: 1.0
 
+  property int hour: 0
+  property int minut: 0
+
+
   Component.onCompleted: {
+    clear()
+  }
+
+  Timer {
+    id: changeStateTimer
+    interval: 50; running: false; repeat: true
+    property int delta: 0
+    onTriggered: {
+      if (__mode === __caseMinute) {
+        __hourRadius += Density.dp
+        __minutRadius += Density.dp
+      }
+      else if (__mode === __caseHour) {
+        __hourRadius -= Density.dp
+        __minutRadius -= Density.dp
+      }
+
+      delta++;
+      if (__mode === __caseMinute) {
+        __textOpacity -= 0.1;
+      }
+      else {
+        if (__textOpacity === 0.0)
+          __textOpacity = 0.1
+        else
+          __textOpacity += 0.1;
+      }
+
+      if (delta > 10) {
+        delta = 0
+        __textOpacity = __mode === __caseMinute ? 0.0 : 1.0
+        stop()
+
+        if (__mode === __caseMinute) {
+          __minutRadius = width * 0.5;
+        }
+        else if (__mode == __caseHour) {
+          __hourRadius = width * 0.5;
+          __minutRadius = width * 0.4
+        }
+      }
+
+      calcClock()
+      canvas.requestPaint()
+    }
+  }
+
+  function selectHour() {
+    if (changeStateTimer.triggeredOnStart)
+      return;
+
+    if (__mode === __caseHour)
+      return;
+
+    __mode = __caseHour
+    changeStateTimer.start()
+  }
+
+  function selectMinute() {
+    if (changeStateTimer.triggeredOnStart)
+      return;
+
+    if (__mode === __caseMinute)
+      return;
+
+    __mode = __caseMinute
+    changeStateTimer.start()
+  }
+
+  function clear() {
+    __hourParts = []
+    __minutParts = []
     for (var i = 0; i < 12; i++) {
       __hourParts.push({x: 0, y: 0})
       __minutParts.push({x: 0, y: 0})
     }
 
-    calcHours();
+    __mode = __caseHour
 
-    __currentX = __hourParts[0].x
-    __currentY = __hourParts[0].y
+    __hourRadius = width * 0.5
+    __minutRadius = width * 0.4
+    __textOpacity = 1.0
+
+    // Получение текущего времени
+    var date = new Date()
+    hour = 9//date.getHours()
+    minut = 25//date.getMinutes()
+    console.debug(hour)
+    console.debug(minut)
+
+    calcClock();
+
+    canvas.requestPaint()
   }
 
-  Timer {
-    id: changeStateTimer
-    interval: 100; running: false; repeat: true
-    property int delta: 0
-    onTriggered: {
-      __hourRadius += Density.dp
-      __minutRadius += Density.dp
-      calcHours()
-      canvas.requestPaint()
-
-      delta++;
-      __textOpacity /= 2;
-      if (delta > 10*Density.dp) {
-        delta = 0
-        stop()
-
-        __radius = width * 0.3;
-        __textOpacity = 1.0
-        calcHours()
-        canvas.requestPaint()
-      }
-    }
-  }
-
-  function calcHours() {
+  function calcClock() {
     for (var i = 0; i < 12; i++) {
       var angle = i * Math.PI / 6
       var hourPointX = __centerX + __hourRadius*0.9 * Math.sin(angle)
@@ -86,6 +149,7 @@ Rectangle {
     return Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2) <= Math.pow(radius, 2)
   }
 
+
   Canvas {
     id: canvas
     anchors.fill: parent
@@ -99,35 +163,61 @@ Rectangle {
       ctx.fill();
       ctx.closePath();
 
+      var bigRadius = 10*Density.dp;
+
+      var hourIndex = __hours.indexOf(hour);
+      var minuteIndex = __minuts.indexOf(minut);
+
+      var __hourCurrentX =  __hourParts[hourIndex].x
+      var __hourCurrentY =  __hourParts[hourIndex].y
+
+      var __minuteCurrentX =  __minutParts[minuteIndex].x
+      var __minuteCurrentY =  __minutParts[minuteIndex].y
+
       // Большой круг скраю
       ctx.beginPath();
-      ctx.fillStyle = "#0277bd";
-      var bigRadius = 10*Density.dp;
-      ctx.ellipse(__currentX - bigRadius, __currentY - bigRadius, 2*bigRadius, 2*bigRadius);
+      ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
+      ctx.ellipse(__hourCurrentX - bigRadius, __hourCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
       ctx.fill();
       ctx.closePath();
 
       // Стрелка
       ctx.beginPath();
-      ctx.strokeStyle = "#0277bd";
+      ctx.strokeStyle = Qt.rgba(0,0,0, __textOpacity);
       ctx.lineWidth = 3
       ctx.moveTo(__centerX, __centerY);
-      ctx.lineTo(__currentX, __currentY);
+      ctx.lineTo(__hourCurrentX, __hourCurrentY);
+      ctx.stroke()
+      ctx.closePath();
+
+      // Большой круг скраю
+      ctx.beginPath();
+      ctx.fillStyle = Qt.rgba(0,0,0, 1.0 - __textOpacity);
+      ctx.ellipse(__minuteCurrentX - bigRadius, __minuteCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
+      ctx.fill();
+      ctx.closePath();
+
+      // Стрелка
+      ctx.beginPath();
+      ctx.strokeStyle = Qt.rgba(0,0,0, 1.0 - __textOpacity);
+      ctx.lineWidth = 3
+      ctx.moveTo(__centerX, __centerY);
+      ctx.lineTo(__minuteCurrentX, __minuteCurrentY);
       ctx.stroke()
       ctx.closePath();
     }
 
     onPaint: {
-      // Большой круг
       var ctx = getContext("2d");
 
-      // Большой круг скраю
+      // Фон
       ctx.beginPath();
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, width, height);
       ctx.fill();
       ctx.closePath();
 
+      // Циферблат
       ctx.fillStyle = "#e0e0e0";
       ctx.ellipse(__centerX - __radius, __centerY - __radius, __radius*2, __radius*2);
       ctx.fill();
@@ -135,25 +225,21 @@ Rectangle {
       // Стрелка
       paintArrow(ctx);
 
-      // Текст цифры
+      // Часы
       ctx.beginPath();
-      ctx.strokeStyle = Qt.rgba(0,0,0, __textOpacity);
+      ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
       ctx.lineWidth = 1
-      ctx.font = "50pt";
-      switch (__mode) {
-        case __caseHour:
-          for (var i = 0; i < 12; i++) {
-            ctx.strokeText(__hourParts[i], __hourParts[i].x, __hourParts[i].y)
-          }
-          break
-        case __caseMinute:
-          for (i = 0; i < 12; i++) {
-            ctx.strokeText(__minutParts[i], __ts[i].x, __minutParts[i].y)
-          }
-          break
-        default:
-      }
-      ctx.stroke()
+      ctx.textAlign="center";
+      for (var i = 0; i < 12; i++)
+        ctx.fillText(__hours[i], __hourParts[i].x, __hourParts[i].y)
+      ctx.closePath();
+
+      // Минуты
+      ctx.beginPath();
+      ctx.fillStyle = Qt.rgba(0,0,0, 1 - __textOpacity);
+      ctx.lineWidth = 1
+      for (i = 0; i < 12; i++)
+        ctx.fillText(__minuts[i], __minutParts[i].x, __minutParts[i].y)
       ctx.closePath();
     }
 
@@ -168,23 +254,27 @@ Rectangle {
         if (!inEllipse(__centerX, __centerY, __radius, x, y))
           return
 
+        //
+        if (changeStateTimer.triggeredOnStart)
+          return
+
         for (var i = 0; i < 12; i++) {
           switch (__mode) {
             case __caseHour:
               if (inEllipse(__hourParts[i].x, __hourParts[i].y, 10*Density.dp, x, y)) {
-                __currentX = __hourParts[i].x
-                __currentY = __hourParts[i].y
+                __mode = __caseMinute
+                hour = __hours[i]
                 changeStateTimer.start()
                 return
               }
               break
             case __caseMinute:
               if (inEllipse(__minutParts[i].x, __minutParts[i].y, 10*Density.dp, x, y)) {
-                __currentX = __minutParts[i].x
-                __currentY = __minutParts[i].y
+                minut = __minuts[i]
+                canvas.requestPaint()
               }
               break
-            default: {}
+            default:
           }//switch
         }//for
       }//onClicked
