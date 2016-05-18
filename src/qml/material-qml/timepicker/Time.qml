@@ -21,8 +21,7 @@ Rectangle {
   //property int __hourRadiusPM:  width * 0.3
   property int __minuteRadius:  width * 0.4
 
-  property int __centerX:  width * 0.5
-  property int __centerY:  width * 0.5
+  property int __center:  { x: width * 0.5; y: width * 0.5 }
 
   property var __hours: [6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 7]
   //property var __hoursPM: [18, 17, 16, 15, 14, 13, 0, 23, 22, 21, 20, 19]
@@ -144,14 +143,14 @@ Rectangle {
     var angle;
     for (var i = 0; i < __hourParts.length; i++) {
       angle = i * Math.PI / 6
-      var hourPointX = __centerX + __hourRadius*0.9 * Math.sin(angle)
-      var hourPointY = __centerY + __hourRadius*0.9 * Math.cos(angle)
+      var hourPointX = __center.x + __hourRadius*0.9 * Math.sin(angle)
+      var hourPointY = __center.y + __hourRadius*0.9 * Math.cos(angle)
       __hourParts[i] = {x: hourPointX, y: hourPointY}
     }
     for (i = 0; i < __minuteParts.length; i++) {
       angle = i * Math.PI / 30
-      var minutPointX = __centerX + __minuteRadius*0.9 * Math.sin(angle)
-      var minutPointY = __centerY + __minuteRadius*0.9 * Math.cos(angle)
+      var minutPointX = __center.x + __minuteRadius*0.9 * Math.sin(angle)
+      var minutPointY = __center.y + __minuteRadius*0.9 * Math.cos(angle)
       __minuteParts[i] = {x: minutPointX, y: minutPointY}
     }
   }
@@ -170,7 +169,7 @@ Rectangle {
       ctx.beginPath();
       ctx.fillStyle = "#0277bd";
       var smallRadius = 5*Density.dp;
-      ctx.ellipse(__centerX - smallRadius, __centerY - smallRadius, 2*smallRadius, 2*smallRadius);
+      ctx.ellipse(__center.x - smallRadius, __center.y - smallRadius, 2*smallRadius, 2*smallRadius);
       ctx.fill();
       ctx.closePath();
 
@@ -179,16 +178,20 @@ Rectangle {
       var hourIndex = __hours.indexOf(hour);
       var minuteIndex = __minutes.indexOf(minute);
 
-      var __hourCurrentX =  __hourParts[hourIndex].x
-      var __hourCurrentY =  __hourParts[hourIndex].y
+      var hourCurrent = {
+        x:  __hourParts[hourIndex].x,
+        y: __hourParts[hourIndex].y
+      }
 
-      var __minuteCurrentX =  __minuteParts[minuteIndex].x
-      var __minuteCurrentY =  __minuteParts[minuteIndex].y
+      var minuteCurrent = {
+        x: __minuteParts[minuteIndex].x,
+        y: __minuteParts[minuteIndex].y
+      }
 
       // Большой круг скраю
       ctx.beginPath();
       ctx.fillStyle =  Qt.rgba(0.01, 0.47, 0.74, __textOpacity);//"#0277bd"
-      ctx.ellipse(__hourCurrentX - bigRadius, __hourCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
+      ctx.ellipse(hourCurrent.x - bigRadius, hourCurrent.y - bigRadius, 2*bigRadius, 2*bigRadius);
       ctx.fill();
       ctx.closePath();
 
@@ -196,15 +199,15 @@ Rectangle {
       ctx.beginPath();
       ctx.strokeStyle = Qt.rgba(0.01, 0.47, 0.74, __textOpacity);//"#0277bd"
       ctx.lineWidth = 3
-      ctx.moveTo(__centerX, __centerY);
-      ctx.lineTo(__hourCurrentX, __hourCurrentY);
+      ctx.moveTo(__center.x, __center.y);
+      ctx.lineTo(hourCurrent.x, hourCurrent.y);
       ctx.stroke()
       ctx.closePath();
 
       // Большой круг скраю
       ctx.beginPath();
       ctx.fillStyle = Qt.rgba(0.01, 0.47, 0.74, 1.0 - __textOpacity);//"#0277bd"
-      ctx.ellipse(__minuteCurrentX - bigRadius, __minuteCurrentY - bigRadius, 2*bigRadius, 2*bigRadius);
+      ctx.ellipse(minuteCurrent.x - bigRadius, minuteCurrent.y - bigRadius, 2*bigRadius, 2*bigRadius);
       ctx.fill();
       ctx.closePath();
 
@@ -212,8 +215,8 @@ Rectangle {
       ctx.beginPath();
       ctx.strokeStyle = Qt.rgba(0.01, 0.47, 0.74, 1.0 - __textOpacity);//"#0277bd"
       ctx.lineWidth = 3
-      ctx.moveTo(__centerX, __centerY);
-      ctx.lineTo(__minuteCurrentX, __minuteCurrentY);
+      ctx.moveTo(__center.x, __center.y);
+      ctx.lineTo(minuteCurrent.x, minuteCurrent.y);
       ctx.stroke()
       ctx.closePath();
     }
@@ -230,7 +233,7 @@ Rectangle {
 
       // Циферблат
       ctx.fillStyle = "#e0e0e0";
-      ctx.ellipse(__centerX - __radius, __centerY - __radius, __radius*2, __radius*2);
+      ctx.ellipse(__center.x - __radius, __center.y - __radius, __radius*2, __radius*2);
       ctx.fill();
 
       // Стрелка
@@ -239,7 +242,7 @@ Rectangle {
       // Часы
       ctx.beginPath();
       ctx.lineWidth = 1
-      ctx.textAlign="center";
+      ctx.textAlign = "center";
       var hourIndex = __hours.indexOf(hour);
       for (var i = 0; i < __hours.length; i++) {
         if (hourIndex === i)
@@ -300,7 +303,7 @@ Rectangle {
         var x = mouse.x
         var y = mouse.y
         // Проверка, что попали в круг циферблата
-        if (!inEllipse(__centerX, __centerY, __radius, x, y))
+        if (!inEllipse(__center.x, __center.y, __radius, x, y))
           return
 
         // Если таймер еще не закончил работу
