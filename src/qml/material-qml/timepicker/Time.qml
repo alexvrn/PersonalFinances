@@ -293,7 +293,7 @@ Rectangle {
             }
             break
           default: console.warn("unknown type: " + __mode)
-        }
+        }//switch
       }
 
       onPressed: {
@@ -315,14 +315,12 @@ Rectangle {
       onMouseXChanged: {
         if (!__isPress)
           return;
-
         move(mouse.x, mouse.y)
       }
 
       onMouseYChanged: {
         if (!__isPress)
           return;
-
         move(mouse.x, mouse.y)
       }
 

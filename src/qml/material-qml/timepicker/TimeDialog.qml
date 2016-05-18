@@ -9,15 +9,27 @@ Material.Dialog {
   property int hour: 0
   property int minute: 0
 
+  property color __activeColor: "white"
+  property color __noActiveColor: "#81d4fa"
+
+
   Component.onCompleted: {
     // Получение текущего времени
     var date = new Date()
     var hour = (date.getHours() > 12) ? (date.getHours() - 12) : date.getHours()
     var minute = date.getMinutes()
-    hourLabel.text = hour
-    minuteLabel.text = minute
-    hourLabel.color = "white"
-    minuteLabel.color = "#81d4fa"
+    hourLabel.text = format2(hour)
+    minuteLabel.text = format2(minute)
+    hourLabel.color = __activeColor
+    minuteLabel.color = __noActiveColor
+  }
+
+  function format2(n) {
+    var s = n.toString()
+    if (n < 10)
+      s = "0" + s
+
+    return s
   }
 
   Rectangle {
@@ -52,8 +64,8 @@ Material.Dialog {
         onClicked: {
           time.selectHour()
           changeHourValueAnimation.start()
-          hourLabel.color = "white"
-          minuteLabel.color = "#81d4fa"
+          hourLabel.color = __activeColor
+          minuteLabel.color = __noActiveColor
         }
       }
 
@@ -99,8 +111,8 @@ Material.Dialog {
         onClicked: {
           time.selectMinute()
           changeMinuteValueAnimation.start()
-          minuteLabel.color = "white"
-          hourLabel.color = "#81d4fa"
+          minuteLabel.color = __activeColor
+          hourLabel.color = __noActiveColor
         }
       }
 
@@ -121,16 +133,19 @@ Material.Dialog {
     }
 
     onSelectClock: {
+      // FIXME: 'n' => '0n'
+      var sValue = format2(value)
+
       if (mode === 0) {
-        hourLabel.text = value
+        hourLabel.text = sValue
         hour = value
       }
       else if (mode === 1) {
-        minuteLabel.text = value
+        minuteLabel.text = sValue
         minute = value
       }
-      hourLabel.color = "#81d4fa"
-      minuteLabel.color = "white"
+      hourLabel.color = __noActiveColor
+      minuteLabel.color = __activeColor
     }
   }
 
