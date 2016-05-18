@@ -9,6 +9,7 @@ Material.Dialog {
 
   property string value: "0"
   property bool __isOperation: false
+  property string __memory: ""
 
   signal getValue(int value)
 
@@ -37,6 +38,21 @@ Material.Dialog {
     else {
       if (type === "clear") {
         clear()
+      }
+      else if (type === "clear-memory") {
+        __memory = ""
+      }
+      else if (type === "plus-memory") {
+        __memory = eval(__memory + "+(" + summa.text + ")");
+      }
+      else if (type === "minus-memory") {
+        __memory = eval(__memory + "-(" + summa.text + ")");
+      }
+      else if (type === "from-memory") {
+        summa.text = __memory;
+      }
+      else if (type === "to-memory") {
+        __memory = summa.text
       }
       else if (type === "eval") {
         __isOperation = true
@@ -75,18 +91,33 @@ Material.Dialog {
       right: parent.right
       rightMargin: 20*Density.dp
     }
+    textHorizontalAlignment: Text.AlignRight
     text: value
-    textReadOnly: true
+    textReadOnly: true // Запрещаем вводить текст вручную
     tipVisible: true
   }
 
+  Material.AnimatedText {
+    id: memoryText
+    text: __memory === "" ? "" : ("M = " + __memory)
+    anchors {
+      top: summa.bottom
+      topMargin: 2*Density.dp
+      left: parent.left
+      leftMargin: 20*Density.dp
+      right: parent.right
+      rightMargin: 20*Density.dp
+    }
+    height: 10*Density.dp
+    animation: memoryText.flipAnimation
+  }
 
   Grid {
     id: grid
     columns: 5
     anchors {
-      top: summa.bottom
-      topMargin: 5*Density.dp
+      top: memoryText.bottom
+      topMargin: 10*Density.dp
       left: parent.left
       leftMargin: 20*Density.dp
       right: parent.right
@@ -96,31 +127,31 @@ Material.Dialog {
     horizontalItemAlignment: Grid.AlignHCenter
     verticalItemAlignment: Grid.AlignVCenter
 
-    CalculatorButton { color: "#03a9f4"; text: "MC"; }
-    CalculatorButton { color: "#03a9f4"; text: "MR"; }
-    CalculatorButton { color: "#03a9f4"; text: "MS"; }
-    CalculatorButton { color: "#03a9f4"; text: "M+"; }
-    CalculatorButton { color: "#03a9f4"; text: "M-"; }
+    CalculatorButton { color: "#03a9f4"; text: "MC"; type: "clear-memory" }
+    CalculatorButton { color: "#03a9f4"; text: "MR"; type: "from-memory" }
+    CalculatorButton { color: "#03a9f4"; text: "MS"; type: "to-memory" }
+    CalculatorButton { color: "#03a9f4"; text: "M+"; type: "plus-memory" }
+    CalculatorButton { color: "#03a9f4"; text: "M-"; type: "minus-memory" }
     CalculatorButton { color: "#ff5722"; text: "C"; type: "clear" }
-    CalculatorButton { color: "#ff5722"; text: "←"; type: "back"}
-    CalculatorButton { color: "#757575"; text: "7"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "8"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "9"; isNumber: true}
+    CalculatorButton { color: "#ff5722"; text: "←"; type: "back" }
+    CalculatorButton { color: "#757575"; text: "7"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "8"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "9"; isNumber: true }
     CalculatorButton { color: "#4caf50"; text: "%"; }
     CalculatorButton { color: "#4caf50"; text: "/"; }
-    CalculatorButton { color: "#757575"; text: "4"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "5"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "6"; isNumber: true}
+    CalculatorButton { color: "#757575"; text: "4"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "5"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "6"; isNumber: true }
     CalculatorButton { color: "#4caf50"; text: "-"; }
     CalculatorButton { color: "#4caf50"; text: "*"; }
-    CalculatorButton { color: "#757575"; text: "1"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "2"; isNumber: true}
-    CalculatorButton { color: "#757575"; text: "3"; isNumber: true}
-    CalculatorButton { color: "#4caf50"; text: "="; type: "eval"}
+    CalculatorButton { color: "#757575"; text: "1"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "2"; isNumber: true }
+    CalculatorButton { color: "#757575"; text: "3"; isNumber: true }
+    CalculatorButton { color: "#4caf50"; text: "="; type: "eval" }
     CalculatorButton { color: "#4caf50"; text: "+"; }
-    CalculatorButton { color: "#4caf50"; text: "±"; type: "negative"}
-    CalculatorButton { color: "#757575"; text: "0"; isNumber: true}
-    CalculatorButton { color: "#4caf50"; text: "."; isNumber: true;}
+    CalculatorButton { color: "#4caf50"; text: "±"; type: "negative" }
+    CalculatorButton { color: "#757575"; text: "0"; isNumber: true }
+    CalculatorButton { color: "#4caf50"; text: "."; isNumber: true }
   }
   CalculatorButton {
     id: ok
