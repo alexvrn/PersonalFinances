@@ -19,31 +19,31 @@ Rectangle {
   property int __radius:  width * 0.5
   property int __hourRadius:  width * 0.4
   //property int __hourRadiusPM:  width * 0.3
-  property int __minutRadius:  width * 0.4
+  property int __minuteRadius:  width * 0.4
 
   property int __centerX:  width * 0.5
   property int __centerY:  width * 0.5
 
   property var __hours: [6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 7]
   //property var __hoursPM: [18, 17, 16, 15, 14, 13, 0, 23, 22, 21, 20, 19]
-  property var __minuts: []
+  property var __minutes: []
 
   property var __hourParts: []
-  property var __minutParts: []
+  property var __minuteParts: []
 
   property double __textOpacity: 1.0
 
   property int hour: 0
-  property int minut: 0
+  property int minute: 0
 
   signal selectClock(int value, int mode)
 
   Component.onCompleted: {
     //[30, 29, ..., 1, 0, 59, 58, ..., 32, 31]
     for (var i = 30; i >= 0; i--)
-      __minuts.push(i)
+      __minutes.push(i)
     for (i = 59; i >= 31; i--)
-      __minuts.push(i)
+      __minutes.push(i)
 
     clear()
   }
@@ -55,11 +55,11 @@ Rectangle {
     onTriggered: {
       if (__mode === __caseMinute) {
         __hourRadius += Density.dp
-        __minutRadius += Density.dp
+        __minuteRadius += Density.dp
       }
       else if (__mode === __caseHour) {
         __hourRadius -= Density.dp
-        __minutRadius -= Density.dp
+        __minuteRadius -= Density.dp
       }
 
       delta++;
@@ -79,11 +79,11 @@ Rectangle {
         stop()
 
         if (__mode === __caseMinute) {
-          __minutRadius = width * 0.5;
+          __minuteRadius = width * 0.5;
         }
         else if (__mode == __caseHour) {
           __hourRadius = width * 0.5;
-          __minutRadius = width * 0.4
+          __minuteRadius = width * 0.4
         }
       }
 
@@ -118,24 +118,22 @@ Rectangle {
 
   function clear() {
     __hourParts = []
-    __minutParts = []
+    __minuteParts = []
     for (var i = 0; i < __hours.length; i++)
       __hourParts.push({x: 0, y: 0})
-    for (i = 0; i < __minuts.length; i++)
-      __minutParts.push({x: 0, y: 0})
+    for (i = 0; i < __minutes.length; i++)
+      __minuteParts.push({x: 0, y: 0})
 
     __mode = __caseHour
 
     __hourRadius = width * 0.5
-    __minutRadius = width * 0.4
+    __minuteRadius = width * 0.4
     __textOpacity = 1.0
 
     // Получение текущего времени
     var date = new Date()
     hour = (date.getHours() > 12) ? (date.getHours() - 12) : date.getHours()
-    minut = date.getMinutes()
-    selectClock(hour, __caseHour)
-    selectClock(minut, __caseMinute)
+    minute = date.getMinutes()
 
     calcClock();
 
@@ -150,11 +148,11 @@ Rectangle {
       var hourPointY = __centerY + __hourRadius*0.9 * Math.cos(angle)
       __hourParts[i] = {x: hourPointX, y: hourPointY}
     }
-    for (i = 0; i < __minutParts.length; i++) {
+    for (i = 0; i < __minuteParts.length; i++) {
       angle = i * Math.PI / 30
-      var minutPointX = __centerX + __minutRadius*0.9 * Math.sin(angle)
-      var minutPointY = __centerY + __minutRadius*0.9 * Math.cos(angle)
-      __minutParts[i] = {x: minutPointX, y: minutPointY}
+      var minutPointX = __centerX + __minuteRadius*0.9 * Math.sin(angle)
+      var minutPointY = __centerY + __minuteRadius*0.9 * Math.cos(angle)
+      __minuteParts[i] = {x: minutPointX, y: minutPointY}
     }
   }
 
@@ -179,13 +177,13 @@ Rectangle {
       var bigRadius = 10*Density.dp;
 
       var hourIndex = __hours.indexOf(hour);
-      var minuteIndex = __minuts.indexOf(minut);
+      var minuteIndex = __minutes.indexOf(minute);
 
       var __hourCurrentX =  __hourParts[hourIndex].x
       var __hourCurrentY =  __hourParts[hourIndex].y
 
-      var __minuteCurrentX =  __minutParts[minuteIndex].x
-      var __minuteCurrentY =  __minutParts[minuteIndex].y
+      var __minuteCurrentX =  __minuteParts[minuteIndex].x
+      var __minuteCurrentY =  __minuteParts[minuteIndex].y
 
       // Большой круг скраю
       ctx.beginPath();
@@ -240,20 +238,30 @@ Rectangle {
 
       // Часы
       ctx.beginPath();
-      ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
       ctx.lineWidth = 1
       ctx.textAlign="center";
-      for (var i = 0; i < __hours.length; i++)
+      var hourIndex = __hours.indexOf(hour);
+      for (var i = 0; i < __hours.length; i++) {
+        if (hourIndex === i)
+          ctx.fillStyle = Qt.rgba(100,100,100, __textOpacity);
+        else
+          ctx.fillStyle = Qt.rgba(0,0,0, __textOpacity);
         ctx.fillText(__hours[i], __hourParts[i].x, __hourParts[i].y)
+      }
       ctx.closePath();
 
       // Минуты
       ctx.beginPath();
-      ctx.fillStyle = Qt.rgba(0,0,0, 1 - __textOpacity);
       ctx.lineWidth = 1
-      for (i = 0; i < __minuts.length; i++) {
-        if (i%5 === 0)
-          ctx.fillText(__minuts[i], __minutParts[i].x, __minutParts[i].y)
+      var minuteIndex = __minutes.indexOf(minute);
+      for (i = 0; i < __minutes.length; i++) {
+        if (i%5 === 0) {
+          if (minuteIndex === i)
+            ctx.fillStyle = Qt.rgba(100,100,100, 1 - __textOpacity);
+          else
+            ctx.fillStyle = Qt.rgba(0,0,0, 1 - __textOpacity);
+          ctx.fillText(__minutes[i], __minuteParts[i].x, __minuteParts[i].y)
+        }
       }
       ctx.closePath();
     }
@@ -261,42 +269,76 @@ Rectangle {
     MouseArea {
       id: mouseArea
       anchors.fill: parent
+      property bool __isPress: false
 
-      onClicked: {
-        var x = mouse.x
-        var y = mouse.y
-        // Проверка, что попали в круг циферблата
-        if (!inEllipse(__centerX, __centerY, __radius, x, y))
-          return
-
-        // Если нтаймер еще не закончил работу
-        if (changeStateTimer.triggeredOnStart)
-          return
-
+      function move(x, y) {
         switch (__mode) {
           case __caseHour:
             for (var i = 0; i < __hourParts.length; i++) {
               if (inEllipse(__hourParts[i].x, __hourParts[i].y, 10*Density.dp, x, y)) {
-                __mode = __caseMinute
                 hour = __hours[i]
-                changeStateTimer.start()
+                canvas.requestPaint()
                 selectClock(hour, __caseHour)
                 return
               }
             }
             break
           case __caseMinute:
-            for (i = 0; i < __minutParts.length; i++) {
-              if (inEllipse(__minutParts[i].x, __minutParts[i].y, 10*Density.dp, x, y)) {
-                minut = __minuts[i]
+            for (i = 0; i < __minuteParts.length; i++) {
+              if (inEllipse(__minuteParts[i].x, __minuteParts[i].y, 10*Density.dp, x, y)) {
+                minute = __minutes[i]
                 canvas.requestPaint()
-                selectClock(minut, __caseMinute)
+                selectClock(minute, __caseMinute)
               }
             }
             break
           default: console.warn("unknown type: " + __mode)
+        }
+      }
+
+      onPressed: {
+        var x = mouse.x
+        var y = mouse.y
+        // Проверка, что попали в круг циферблата
+        if (!inEllipse(__centerX, __centerY, __radius, x, y))
+          return
+
+        // Если таймер еще не закончил работу
+        if (changeStateTimer.triggeredOnStart)
+          return
+
+        __isPress = true
+
+        move(x, y)
+      }//onPressed
+
+      onMouseXChanged: {
+        if (!__isPress)
+          return;
+
+        move(mouse.x, mouse.y)
+      }
+
+      onMouseYChanged: {
+        if (!__isPress)
+          return;
+
+        move(mouse.x, mouse.y)
+      }
+
+      onReleased: {
+        if (!__isPress)
+          return
+
+        __isPress = false
+
+        switch (__mode) {
+          case __caseHour:
+            __mode = __caseMinute
+            changeStateTimer.start()
+            break
         }//switch
-      }//onClicked
+      }//onReleased
     }
   }
 }

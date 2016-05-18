@@ -9,6 +9,17 @@ Material.Dialog {
   property int hour: 0
   property int minute: 0
 
+  Component.onCompleted: {
+    // Получение текущего времени
+    var date = new Date()
+    var hour = (date.getHours() > 12) ? (date.getHours() - 12) : date.getHours()
+    var minute = date.getMinutes()
+    hourLabel.text = hour
+    minuteLabel.text = minute
+    hourLabel.color = "white"
+    minuteLabel.color = "#81d4fa"
+  }
+
   Rectangle {
     color: "#0277bd"
     anchors {
@@ -41,6 +52,8 @@ Material.Dialog {
         onClicked: {
           time.selectHour()
           changeHourValueAnimation.start()
+          hourLabel.color = "white"
+          minuteLabel.color = "#81d4fa"
         }
       }
 
@@ -65,7 +78,7 @@ Material.Dialog {
     }
     Text {
       id: minuteLabel
-      color: "white"
+      color: "#e0e0e0"
       anchors {
         top: parent.top
         left: splitter.right
@@ -86,6 +99,8 @@ Material.Dialog {
         onClicked: {
           time.selectMinute()
           changeMinuteValueAnimation.start()
+          minuteLabel.color = "white"
+          hourLabel.color = "#81d4fa"
         }
       }
 
@@ -114,6 +129,8 @@ Material.Dialog {
         minuteLabel.text = value
         minute = value
       }
+      hourLabel.color = "#81d4fa"
+      minuteLabel.color = "white"
     }
   }
 
