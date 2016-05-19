@@ -32,6 +32,8 @@ Rectangle {
 
   property double __textOpacity: 1.0
 
+  property bool __process: false // Работает ли таймер
+
   property int hour: 0
   property int minute: 0
 
@@ -50,7 +52,7 @@ Rectangle {
   Timer {
     id: changeStateTimer
     interval: 50; running: false; repeat: true
-    property int delta: 0 // индикатор итерации
+    property int __delta: 0 // индикатор итерации
     onTriggered: {
       if (__mode === __caseMinute) {
         __hourRadius += Density.dp
@@ -61,7 +63,7 @@ Rectangle {
         __minuteRadius -= Density.dp
       }
 
-      delta++;
+      __delta++;
       if (__mode === __caseMinute) {
         __textOpacity -= 0.1;
       }
@@ -72,10 +74,11 @@ Rectangle {
           __textOpacity += 0.1;
       }
 
-      if (delta > 10) {
-        delta = 0
+      if (__delta > 10) {
+        __delta = 0
         __textOpacity = __mode === __caseMinute ? 0.0 : 1.0
         stop()
+        __process = false
 
         if (__mode === __caseMinute) {
           __minuteRadius = width * 0.5;
@@ -92,8 +95,8 @@ Rectangle {
   }
 
   function selectHour() {
-    // Если нтаймер еще не закончил работу
-    if (changeStateTimer.triggeredOnStart)
+    // Если таймер еще не закончил работу
+    if (__process)
       return;
 
     if (__mode === __caseHour)
@@ -101,11 +104,12 @@ Rectangle {
 
     __mode = __caseHour
     changeStateTimer.start()
+    __process = true
   }
 
   function selectMinute() {
     // Если нтаймер еще не закончил работу
-    if (changeStateTimer.triggeredOnStart)
+    if (__process)
       return;
 
     if (__mode === __caseMinute)
@@ -113,6 +117,7 @@ Rectangle {
 
     __mode = __caseMinute
     changeStateTimer.start()
+    __process = true
   }
 
   function clear() {
@@ -135,6 +140,9 @@ Rectangle {
     minute = date.getMinutes()
 
     calcClock();
+
+    changeStateTimer.stop()
+    __process = false;
 
     canvas.requestPaint()
   }
@@ -307,7 +315,7 @@ Rectangle {
           return
 
         // Если таймер еще не закончил работу
-        if (changeStateTimer.triggeredOnStart)
+        if (__process)
           return
 
         __isPress = true
@@ -337,6 +345,7 @@ Rectangle {
           case __caseHour:
             __mode = __caseMinute
             changeStateTimer.start()
+            __process = true
             break
         }//switch
       }//onReleased
