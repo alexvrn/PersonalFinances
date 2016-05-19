@@ -25,7 +25,10 @@ Material.Dialog {
     if (isNumber) {
       if (__isOperation) {
         __isOperation = false
-        summa.text = operation
+        if (operation === ".")
+          summa.text = "0.";
+        else
+          summa.text = operation
       }
       else {
         if (summa.text === "0")
@@ -49,6 +52,9 @@ Material.Dialog {
         __memory = eval(__memory + "-(" + summa.text + ")");
       }
       else if (type === "from-memory") {
+        if (__memory === "")
+          return
+
         summa.text = __memory;
       }
       else if (type === "to-memory") {
@@ -170,6 +176,7 @@ Material.Dialog {
 
   onOpened: {
     clear()
+    __memory = ""
     for(var i = 0; i < grid.children.length; i++) {
       var item = grid.children[i]
       item.height = 40*Density.dp
