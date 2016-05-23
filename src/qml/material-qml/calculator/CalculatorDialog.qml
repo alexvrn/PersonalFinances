@@ -168,9 +168,12 @@ Material.Dialog {
       topMargin: Density.dp*2
       horizontalCenter: parent.horizontalCenter
     }
-    onClicked: {
-      getValue(summa.text)
-      close()
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        getValue(summa.text)
+        close()
+      }
     }
   }
 
@@ -179,11 +182,13 @@ Material.Dialog {
     __memory = ""
     for(var i = 0; i < grid.children.length; i++) {
       var item = grid.children[i]
-      item.height = 40*Density.dp
-      item.width = 40*Density.dp
+      //item.height = 40*Density.dp
+      //item.width = 40*Density.dp
+      item.setSize(40*Density.dp)
     }
-    ok.height = 40*Density.dp
-    ok.width = 40*Density.dp
+    //ok.height = 40*Density.dp
+    //ok.width = 40*Density.dp
+    ok.setSize(40*Density.dp)
 
     if (value === "")
       value = "0"
@@ -193,10 +198,12 @@ Material.Dialog {
   onClosed: {
     for(var i = 0; i < grid.children.length; i++) {
       var item = grid.children[i]
-      item.height = 0
-      item.width = 0
+      //item.height = 0
+      //item.width = 0
+      item.setSize(0)
     }
-    ok.height = 0
-    ok.width = 0
+    //ok.height = 0
+    //ok.width = 0
+    ok.setSize(0)
   }
 }
